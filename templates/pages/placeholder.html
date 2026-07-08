@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} · Lapin Systems{% endblock %}
+{% block body_class %}placeholder-page{% endblock %}
+
+{% block content %}
+    <section class="placeholder-section">
+        <p class="placeholder-kicker">Lapin Systems</p>
+        <h1>{{ title }}</h1>
+        <p>{{ text }}</p>
+        <div class="placeholder-actions">
+            <a class="plain-btn" href="{% url 'pages:home' %}">На главную</a>
+            <a class="plain-btn plain-btn-light" href="tel:+79180916494">Позвонить</a>
+        </div>
+    </section>
+{% endblock %}
