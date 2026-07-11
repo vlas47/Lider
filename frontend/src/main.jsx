@@ -9,6 +9,7 @@ const fallbackConfig = {
     nextGen: "/static/img/next-gen-photo.jpg",
     portfolioDomkapsul: "/static/img/portfolio-domkapsul.jpg",
     portfolioFullbox: "/static/img/portfolio-fullbox.jpg",
+    portfolioNozbart: "/static/img/portfolio-nozbart-russia.png",
     portfolioAshtanga: "/static/img/portfolio-ashtanga-yoga.jpg",
     portfolioSoyz: "/static/img/portfolio-soyz-zastroi.jpg",
   },
@@ -109,6 +110,14 @@ const projects = [
     url: "https://domkapsul.ru/",
     domain: "domkapsul.ru",
     image: "portfolioDomkapsul",
+  },
+  {
+    title: "Nozbart",
+    type: "Оборудование",
+    text: "Сайт официального дистрибьютора оборудования для бассейнов с каталогом продукции.",
+    url: "https://nozbart-russia.ru/",
+    domain: "nozbart-russia.ru",
+    image: "portfolioNozbart",
   },
   {
     title: "Союз Застройщиков",

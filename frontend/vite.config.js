@@ -10,9 +10,9 @@ export default defineConfig({
     rollupOptions: {
       input: "src/main.jsx",
       output: {
-        entryFileNames: "main-testimonials-touch-20260708.js",
-        chunkFileNames: "chunks/[name]-testimonials-touch-20260708.js",
-        assetFileNames: "main-testimonials-touch-20260708[extname]",
+        entryFileNames: "main-add-nozbart-20260711.js",
+        chunkFileNames: "chunks/[name]-add-nozbart-20260711.js",
+        assetFileNames: "main-add-nozbart-20260711[extname]",
       },
     },
   },
