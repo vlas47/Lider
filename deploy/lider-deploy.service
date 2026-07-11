@@ -5,4 +5,16 @@ After=network-online.target
 
 [Service]
 Type=oneshot
+User=deploy
+Group=www-data
+RuntimeDirectory=lider-deploy
+RuntimeDirectoryMode=0750
+Environment=LOCK_FILE=/run/lider-deploy/deploy.lock
+Environment=NPM_CONFIG_CACHE=/srv/cloud_site/.npm-cache
+Environment=PIP_CACHE_DIR=/srv/cloud_site/.pip-cache
 ExecStart=/usr/local/bin/lider-deploy-main.sh
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+ReadWritePaths=/srv/cloud_site /run/lider-deploy
+UMask=0027

@@ -45,6 +45,17 @@ sudo systemctl start lider-deploy.service
 sudo systemctl status lider-deploy.timer
 ```
 
+Install the deploy script and units as root during provisioning. The timer runs
+the script as the unprivileged `deploy` user; repository code must not update
+systemd units. Allow only the application restart command through sudo:
+
+```text
+deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart cloud-site.service
+```
+
+The checkout, virtual environment, frontend dependencies, and cache directories
+under `/srv/cloud_site` must be owned by `deploy:www-data`.
+
 The deploy script fetches `origin/main`, resets the checkout to it, builds the React frontend, installs Python dependencies, runs Django checks, migrations, `collectstatic`, and restarts `cloud-site.service`.
 
 ## Production Env
