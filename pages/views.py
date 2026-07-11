@@ -14,6 +14,7 @@ class HomeView(TemplateView):
                 "nextGen": static("img/next-gen-photo.jpg"),
                 "portfolioDomkapsul": static("img/portfolio-domkapsul.jpg"),
                 "portfolioFullbox": static("img/portfolio-fullbox.jpg"),
+                "portfolioNozbart": static("img/portfolio-nozbart-russia.png"),
                 "portfolioAshtanga": static("img/portfolio-ashtanga-yoga.jpg"),
                 "portfolioSoyz": static("img/portfolio-soyz-zastroi.jpg"),
             },
