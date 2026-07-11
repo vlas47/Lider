@@ -34,6 +34,19 @@ Production uses PostgreSQL. The `USE_SQLITE_FALLBACK=1` flag is only for quick l
 - Merge changes through pull requests after `npm run build` and `python manage.py check`.
 - Do not commit `.env`, server access files, virtual environments, collected static files, or archives.
 
+## Production Deploy
+
+Production `/srv/cloud_site` is a git checkout of `main`.
+
+Server deployment is handled by `deploy/lider-deploy-main.sh` through `systemd`:
+
+```bash
+sudo systemctl start lider-deploy.service
+sudo systemctl status lider-deploy.timer
+```
+
+The deploy script fetches `origin/main`, resets the checkout to it, builds the React frontend, installs Python dependencies, runs Django checks, migrations, `collectstatic`, and restarts `cloud-site.service`.
+
 ## Production Env
 
 Set production values through environment variables:
