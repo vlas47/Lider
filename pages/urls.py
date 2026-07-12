@@ -7,6 +7,7 @@ from .views import (
     PlaceholderView,
     RobotsTxtView,
     SitemapXmlView,
+    YandexSiteVerificationView,
 )
 
 app_name = "pages"
@@ -18,6 +19,11 @@ urlpatterns = [
         "google5c5d79fc4edf432f.html",
         GoogleSiteVerificationView.as_view(),
         name="google-site-verification",
+    ),
+    path(
+        "yandex_3b68de66631d6409.html",
+        YandexSiteVerificationView.as_view(),
+        name="yandex-site-verification",
     ),
     path(
         "favicon.ico",
