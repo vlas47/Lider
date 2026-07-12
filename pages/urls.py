@@ -1,13 +1,24 @@
 from django.urls import path
 from django.views.generic import RedirectView
 
-from .views import HomeView, PlaceholderView, RobotsTxtView, SitemapXmlView
+from .views import (
+    GoogleSiteVerificationView,
+    HomeView,
+    PlaceholderView,
+    RobotsTxtView,
+    SitemapXmlView,
+)
 
 app_name = "pages"
 
 urlpatterns = [
     path("robots.txt", RobotsTxtView.as_view(), name="robots"),
     path("sitemap.xml", SitemapXmlView.as_view(), name="sitemap"),
+    path(
+        "google5c5d79fc4edf432f.html",
+        GoogleSiteVerificationView.as_view(),
+        name="google-site-verification",
+    ),
     path(
         "favicon.ico",
         RedirectView.as_view(url="/static/img/favicon-32.png", permanent=True),
