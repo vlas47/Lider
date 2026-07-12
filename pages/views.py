@@ -81,6 +81,21 @@ class GoogleSiteVerificationView(View):
         )
 
 
+class YandexSiteVerificationView(View):
+    verification_code = "3b68de66631d6409"
+
+    def get(self, request, *args, **kwargs):
+        content = (
+            "<html>\n"
+            "    <head>\n"
+            '        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n'
+            "    </head>\n"
+            f"    <body>Verification: {self.verification_code}</body>\n"
+            "</html>"
+        )
+        return HttpResponse(content, content_type="text/html; charset=utf-8")
+
+
 class SitemapXmlView(View):
     pages = (
         ("/", "weekly", "1.0"),

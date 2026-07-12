@@ -59,6 +59,13 @@ class PublicSiteTests(SimpleTestCase):
             "google-site-verification: google5c5d79fc4edf432f.html",
         )
 
+    def test_yandex_site_verification_file_renders(self):
+        response = self.client.get(reverse("pages:yandex-site-verification"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "text/html; charset=utf-8")
+        self.assertContains(response, "Verification: 3b68de66631d6409")
+
     @override_settings(ALLOWED_HOSTS=["testserver", "liderscan.ru", "www.liderscan.ru"])
     def test_www_redirects_to_canonical_host(self):
         response = self.client.get("/", HTTP_HOST="www.liderscan.ru")
