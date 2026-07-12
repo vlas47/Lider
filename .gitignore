@@ -22,6 +22,8 @@ media/
 .env
 .env.*
 !.env.example
+.npm-cache/
+.pip-cache/
 .DS_Store
 Thumbs.db
 *.log
