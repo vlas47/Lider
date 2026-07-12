@@ -71,6 +71,16 @@ class RobotsTxtView(View):
         return HttpResponse("\n".join(lines), content_type="text/plain; charset=utf-8")
 
 
+class GoogleSiteVerificationView(View):
+    filename = "google5c5d79fc4edf432f.html"
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(
+            f"google-site-verification: {self.filename}",
+            content_type="text/html; charset=utf-8",
+        )
+
+
 class SitemapXmlView(View):
     pages = (
         ("/", "weekly", "1.0"),

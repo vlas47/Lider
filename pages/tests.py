@@ -49,6 +49,16 @@ class PublicSiteTests(SimpleTestCase):
         self.assertEqual(response.status_code, 301)
         self.assertEqual(response["Location"], "/static/img/favicon-32.png")
 
+    def test_google_site_verification_file_renders(self):
+        response = self.client.get(reverse("pages:google-site-verification"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "text/html; charset=utf-8")
+        self.assertContains(
+            response,
+            "google-site-verification: google5c5d79fc4edf432f.html",
+        )
+
     @override_settings(ALLOWED_HOSTS=["testserver", "liderscan.ru", "www.liderscan.ru"])
     def test_www_redirects_to_canonical_host(self):
         response = self.client.get("/", HTTP_HOST="www.liderscan.ru")
