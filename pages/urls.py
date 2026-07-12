@@ -1,10 +1,18 @@
 from django.urls import path
+from django.views.generic import RedirectView
 
-from .views import HomeView, PlaceholderView
+from .views import HomeView, PlaceholderView, RobotsTxtView, SitemapXmlView
 
 app_name = "pages"
 
 urlpatterns = [
+    path("robots.txt", RobotsTxtView.as_view(), name="robots"),
+    path("sitemap.xml", SitemapXmlView.as_view(), name="sitemap"),
+    path(
+        "favicon.ico",
+        RedirectView.as_view(url="/static/img/favicon-32.png", permanent=True),
+        name="favicon",
+    ),
     path("", HomeView.as_view(), name="home"),
     path(
         "industrial-digitization/",
@@ -19,6 +27,7 @@ urlpatterns = [
         PlaceholderView.as_view(
             title="Вход в кабинет",
             text="Личный кабинет будет собран отдельным модулем в новом интерфейсе Lapin Systems.",
+            robots="noindex,nofollow",
         ),
         name="service-login",
     ),
