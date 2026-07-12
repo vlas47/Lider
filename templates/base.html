@@ -4,7 +4,50 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Lapin Systems{% endblock %}</title>
+    <title>{% block title %}{{ seo_title }}{% endblock %}</title>
+    {% block seo_meta %}
+    <meta name="description" content="{{ seo_description }}">
+    <meta name="robots" content="{{ seo_robots }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <meta property="og:locale" content="ru_RU">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Lapin Systems">
+    <meta property="og:title" content="{{ seo_title }}">
+    <meta property="og:description" content="{{ seo_description }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    <meta property="og:image" content="{{ og_image_url }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ seo_title }}">
+    <meta name="twitter:description" content="{{ seo_description }}">
+    <meta name="twitter:image" content="{{ og_image_url }}">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Lapin Systems",
+        "url": "{{ site_base_url }}",
+        "logo": "{{ og_image_url }}",
+        "description": "{{ seo_description }}",
+        "telephone": "+7 918 091-64-94",
+        "sameAs": [
+            "https://domkapsul.ru/",
+            "https://fullbox.ru/",
+            "https://ashtanga-yoga.guru/",
+            "https://soyz-zastroi.ru/",
+            "https://nozbart-russia.ru/"
+        ],
+        "areaServed": "RU",
+        "knowsAbout": [
+            "CRM",
+            "WMS",
+            "Fulfillment",
+            "OCR",
+            "Web applications",
+            "Business process automation"
+        ]
+    }
+    </script>
+    {% endblock %}
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32.png' %}?v=lapin-corners-20260708">
     <link rel="icon" type="image/png" sizes="192x192" href="{% static 'img/favicon-192.png' %}?v=lapin-corners-20260708">
     <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}?v=lapin-corners-20260708">

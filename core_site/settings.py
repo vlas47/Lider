@@ -18,6 +18,12 @@ CSRF_TRUSTED_ORIGINS = [
     for origin in os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "http://localhost,http://127.0.0.1").split(",")
     if origin.strip()
 ]
+SITE_CANONICAL_SCHEME = os.getenv("SITE_CANONICAL_SCHEME", "https")
+SITE_CANONICAL_HOST = os.getenv("SITE_CANONICAL_HOST", "liderscan.ru")
+SITE_BASE_URL = os.getenv(
+    "SITE_BASE_URL",
+    f"{SITE_CANONICAL_SCHEME}://{SITE_CANONICAL_HOST}",
+).rstrip("/")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -31,6 +37,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "core_site.middleware.CanonicalHostMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -50,6 +57,7 @@ TEMPLATES = [
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
+                "pages.context_processors.site_meta",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
