@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 APP_DIR="${APP_DIR:-/srv/AI_Lapin}"
 SERVICE_NAME="${SERVICE_NAME:-ai-lapin.service}"
-REPO_URL="${REPO_URL:-git@github.com:vlas47/Lider.git}"
+REPO_URL="${REPO_URL:-https://github.com/vlas47/Lider.git}"
 BRANCH="${BRANCH:-ai-lapin-prod}"
 
 log() {

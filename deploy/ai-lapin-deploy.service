@@ -10,7 +10,7 @@ Group=www-data
 WorkingDirectory=/srv/AI_Lapin
 Environment=APP_DIR=/srv/AI_Lapin
 Environment=SERVICE_NAME=ai-lapin.service
-Environment=REPO_URL=git@github.com:vlas47/Lider.git
+Environment=REPO_URL=https://github.com/vlas47/Lider.git
 Environment=BRANCH=ai-lapin-prod
 ExecStart=/srv/AI_Lapin/deploy/deploy-ai-lapin.sh
 TimeoutStartSec=600
