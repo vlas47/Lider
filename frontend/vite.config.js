@@ -1,19 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
+
 export default defineConfig({
+  base: "./",
   plugins: [react()],
-  base: "/static/react/home/",
   build: {
-    outDir: "../static/react/home",
+    outDir: "dist",
     emptyOutDir: true,
-    rollupOptions: {
-      input: "src/main.jsx",
-      output: {
-        entryFileNames: "main-add-nozbart-20260711.js",
-        chunkFileNames: "chunks/[name]-add-nozbart-20260711.js",
-        assetFileNames: "main-add-nozbart-20260711[extname]",
-      },
-    },
   },
 });

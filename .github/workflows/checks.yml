@@ -1,30 +1,13 @@
-name: Checks
+name: AI_Lapin checks
 
 on:
   pull_request:
   push:
-    branches:
-      - main
-
-permissions:
-  contents: read
-
-concurrency:
-  group: checks-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    branches: [main, ai-lapin-prod]
 
 jobs:
-  django-react:
-    name: Django and React
+  checks:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    env:
-      DJANGO_SECRET_KEY: ci-secret-key
-      DJANGO_DEBUG: "1"
-      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
-      DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost,http://127.0.0.1
-      USE_SQLITE_FALLBACK: "1"
 
     steps:
       - name: Checkout
@@ -34,52 +17,36 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: pip
 
-      - name: Install Python dependencies
-        run: pip install -r requirements.txt pip-audit
-
-      - name: Audit Python dependencies
-        run: pip-audit -r requirements.txt
-
-      - name: Set up Node.js
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install frontend dependencies
-        run: npm ci
-        working-directory: frontend
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
 
-      - name: Audit frontend dependencies
-        run: npm audit --audit-level=high
+      - name: Install frontend dependencies
         working-directory: frontend
+        run: npm ci --no-audit --no-fund
 
       - name: Build frontend
-        run: npm run build
         working-directory: frontend
+        run: npm run build
 
-      - name: Check Django project
+      - name: Django check
+        env:
+          DJANGO_DEBUG: "1"
         run: python manage.py check
 
-      - name: Check production security settings
+      - name: Migration check
         env:
-          DJANGO_DEBUG: "0"
-          DJANGO_SECRET_KEY: ci-only-production-check-secret-key
-          DJANGO_ALLOWED_HOSTS: example.com
-          DJANGO_CSRF_TRUSTED_ORIGINS: https://example.com
-        run: python manage.py check --deploy
+          DJANGO_DEBUG: "1"
+        run: python manage.py makemigrations --check --dry-run
 
-      - name: Run Django tests
-        run: python manage.py test pages
-
-      - name: Check Python syntax
-        run: python -m compileall -q core_site pages
-
-      - name: Collect static files
-        run: python manage.py collectstatic --noinput
-
-      - name: Build Docker image
-        run: docker build --tag lapin-systems:ci .
+      - name: Tests
+        env:
+          DJANGO_DEBUG: "1"
+        run: python manage.py test

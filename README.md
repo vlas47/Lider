@@ -1,73 +1,70 @@
-# Lapin Systems
+# AI_Lapin
 
-Clean Django + React landing page for a web-systems development company.
+Единый сервис поиска и оценки заявок с двумя независимыми приложениями:
 
-## Local Start
+- `profi` — Profi.ru;
+- `freelance` — Freelance.ru;
+- `leads` — общая модель заявок, скоринг и черновики ответов;
+- `dashboard` — общие проекты, задачи и входящие;
+- `frontend` — React/Vite интерфейс для всех приложений.
+
+Backend работает на Django, production-данные хранятся в отдельной базе `ai_lapin` общего PostgreSQL-сервера. Браузерные сессии разделены: `profiles/profi/browser` и `profiles/freelance/browser`.
+
+Для автоматического восстановления истёкшей сессии Freelance.ru задайте
+`FREELANCE_LOGIN` и `FREELANCE_PASSWORD` только в серверном `.env`. Секреты не
+добавляются в репозиторий; активная сессия сохраняется в
+`profiles/freelance/browser`.
+
+## Локальный запуск
 
 ```powershell
-.\.venv\Scripts\Activate.ps1
-cd frontend
+cd C:\Python\Lider\AI_Lapin
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+cd C:\Python\Lider\AI_Lapin\frontend
+npm ci --no-audit --no-fund
 npm run build
-cd ..
-$env:DJANGO_DEBUG='1'
-python manage.py runserver 127.0.0.1:8015
+
+cd C:\Python\Lider\AI_Lapin
+.\.venv\Scripts\python.exe manage.py migrate
+.\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8020
 ```
 
-## Checks
+Интерфейс: `http://127.0.0.1:8020/`.
 
-```powershell
-cd frontend
-npm run build
-cd ..
-$env:USE_SQLITE_FALLBACK='1'
-python manage.py check
-python manage.py test pages
-python manage.py collectstatic --noinput
-```
+Локально без `.env` используется SQLite. В production обязателен `DATABASE_URL` для PostgreSQL.
 
-Production uses PostgreSQL. The `USE_SQLITE_FALLBACK=1` flag is only for quick local checks without a running Postgres instance.
-
-## Git Workflow
-
-- `main` is the production-ready branch.
-- New work should be done in feature branches, for example `feature/home-copy` or `bugfix/mobile-carousel`.
-- Merge changes through pull requests after `npm run build` and `python manage.py check`.
-- Do not commit `.env`, server access files, virtual environments, collected static files, or archives.
-
-## Production Deploy
-
-Production `/srv/cloud_site` is a git checkout of `main`.
-
-Server deployment is handled by `deploy/lider-deploy-main.sh` through `systemd`:
-
-```bash
-sudo systemctl start lider-deploy.service
-sudo systemctl status lider-deploy.timer
-```
-
-Install the deploy script and units as root during provisioning. The timer runs
-the script as the unprivileged `deploy` user; repository code must not update
-systemd units. Allow only the application restart command through sudo:
+## Production
 
 ```text
-deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart cloud-site.service
+https://liderscan.ru/ai-lapin/
+  -> nginx
+  -> /run/ai-lapin/gunicorn.sock
+  -> Django API + собранный React frontend
+  -> PostgreSQL / database ai_lapin
 ```
 
-The checkout, virtual environment, frontend dependencies, and cache directories
-under `/srv/cloud_site` must be owned by `deploy:www-data`.
+Первичная установка после копирования проекта в `/srv/AI_Lapin`:
 
-The deploy script fetches `origin/main`, resets the checkout to it, builds the React frontend, installs Python dependencies, runs Django checks, migrations, `collectstatic`, and restarts `cloud-site.service`.
+```bash
+sudo bash /srv/AI_Lapin/deploy/install-ai-lapin.sh
+```
 
-## Production Env
+Обновление:
 
-Set production values through environment variables:
+```bash
+sudo -u deploy -g www-data /srv/AI_Lapin/deploy/deploy-ai-lapin.sh
+```
 
-- `DJANGO_SECRET_KEY`
-- `DJANGO_DEBUG=0`
-- `DJANGO_ALLOWED_HOSTS`
-- `DJANGO_CSRF_TRUSTED_ORIGINS`
-- `POSTGRES_DB`
-- `POSTGRES_USER`
-- `POSTGRES_PASSWORD`
-- `POSTGRES_HOST`
-- `POSTGRES_PORT`
+Установщик не меняет базу `cloud_site`: он создаёт отдельную роль и базу `ai_lapin` в уже работающем экземпляре PostgreSQL. Nginx получает только маршрут `/ai-lapin/`, существующий публичный сайт остаётся отдельным сервисом.
+
+## Проверки
+
+```powershell
+.\.venv\Scripts\python.exe manage.py check
+.\.venv\Scripts\python.exe manage.py makemigrations --check --dry-run
+.\.venv\Scripts\python.exe manage.py test
+```
+
+Система создаёт черновики и уведомления, но не отправляет отклики на площадках автоматически.

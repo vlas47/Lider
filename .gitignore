@@ -1,37 +1,17 @@
-# Python / Django
+.env
+db.sqlite3
+staticfiles/
 __pycache__/
 *.pyc
 *.pyo
-*.pyd
-*.sqlite3
-db.sqlite3
-.pytest_cache/
-.pip-audit-cache/
-.coverage
-htmlcov/
-
-# Virtual environments
-.venv/
-venv/
-
-# Django collected static files & media
-staticfiles/
-media/
-
-# Environment / tooling
-.env
-.env.*
-!.env.example
-.npm-cache/
-.pip-cache/
-.DS_Store
-Thumbs.db
 *.log
-*.local.md
-*.tgz
-*.tar.gz
-*.zip
-
-# Frontend
+venv/
+.venv/
+node_modules/
 frontend/node_modules/
 frontend/dist/
+.playwright-browsers/
+profi-browser-profile/
+profi-seen-orders.json
+profiles/
+legacy-db.sqlite3

@@ -1,836 +1,616 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Archive, ArrowRight, ExternalLink, LogIn, Phone } from "lucide-react";
+
+import { api, endpoint, setCsrfToken } from "./api";
 import "./styles.css";
 
-const fallbackConfig = {
-  images: {
-    founder: "/static/img/founder-photo.png",
-    nextGen: "/static/img/next-gen-photo.jpg",
-    portfolioDomkapsul: "/static/img/portfolio-domkapsul.jpg",
-    portfolioFullbox: "/static/img/portfolio-fullbox.jpg",
-    portfolioNozbart: "/static/img/portfolio-nozbart-russia.png",
-    portfolioAshtanga: "/static/img/portfolio-ashtanga-yoga.jpg",
-    portfolioSoyz: "/static/img/portfolio-soyz-zastroi.jpg",
+
+const PLATFORMS = {
+  profi: {
+    key: "profi",
+    label: "Profi.ru",
+    eyebrow: "Profi Radar",
+    defaultUrl: "https://profi.ru/backoffice/n.php",
+    apiBase: "profi/api/server/",
+    accent: "mint",
   },
-  urls: {
-    contact: "#contact",
-    phone: "tel:+79180916494",
-    industrial: "/industrial-digitization/",
-    cabinet: "/service/login/",
+  freelance: {
+    key: "freelance",
+    label: "Freelance.ru",
+    eyebrow: "Freelance Radar",
+    defaultUrl: "https://freelance.ru/task?q=&c%5B%5D=4&a=1&v=1",
+    apiBase: "freelance/api/server/",
+    accent: "amber",
   },
-  cabinetLabel: "Вход в кабинет",
 };
 
-function readConfig() {
-  const configNode = document.getElementById("lapin-home-config");
 
-  if (!configNode) {
-    return fallbackConfig;
+const QUICK_REPLY_TOPICS = [
+  {
+    id: "ecommerce",
+    label: "Интернет-магазин",
+    keywords: ["интернет-магазин", "интернет магазин", "e-commerce", "ecommerce", "каталог товаров", "корзин", "оплат через сайт"],
+    reply: [
+      "Здравствуйте! Занимаюсь разработкой интернет-магазинов и e-commerce систем: каталог, корзина, оплата, доставка, личный кабинет и интеграции с 1С/CRM.",
+      "По вашей задаче могу предложить структуру решения и разбить запуск на понятные этапы. Подскажите: есть ли готовый дизайн и каталог товаров, какие способы оплаты и доставки нужны, требуется ли обмен с 1С или маркетплейсами?",
+      "После уточнений дам оценку сроков и стоимости.",
+    ].join("\n\n"),
+  },
+  {
+    id: "crm",
+    label: "CRM и кабинеты",
+    keywords: ["crm", "срм", "личный кабинет", "кабинет пользователя", "воронк", "учет заявок", "учёт заявок", "бизнес-процесс"],
+    reply: [
+      "Здравствуйте! Проектирую и разрабатываю CRM и личные кабинеты: роли пользователей, статусы заявок, воронки, документы, уведомления и отчёты.",
+      "Готов разобрать ваш процесс и предложить понятную первую версию системы. Уточните, пожалуйста: кто будет работать в системе, как сейчас проходит заявка и с какими сервисами нужна интеграция?",
+      "После короткого уточнения подготовлю структуру, этапы и оценку разработки.",
+    ].join("\n\n"),
+  },
+  {
+    id: "wms",
+    label: "WMS и склад",
+    keywords: ["wms", "склад", "остатк", "ячейк", "приемк", "приёмк", "сборк заказ", "отгруз", "маркировк"],
+    reply: [
+      "Здравствуйте! Разрабатываю складские системы и WMS: приёмка, ячейки, остатки, сборка, отгрузка, маркировка и контроль операций.",
+      "Могу разложить задачу по процессам и предложить поэтапный запуск. Подскажите: сколько складов и пользователей, какое оборудование используется, где сейчас ведётся учёт и нужна ли связь с 1С или маркетплейсами?",
+      "По ответам подготовлю архитектуру первой версии и оценку.",
+    ].join("\n\n"),
+  },
+  {
+    id: "web-app",
+    label: "Веб-сервис и MVP",
+    keywords: ["веб-сервис", "веб сервис", "веб-прилож", "saas", "онлайн-сервис", "онлайн сервис", "mvp", "сервисная платформа"],
+    reply: [
+      "Здравствуйте! Разрабатываю веб-сервисы и MVP: личные кабинеты, роли и права, подписки, платежи, уведомления, административные панели и API.",
+      "Могу помочь превратить идею в понятную первую версию без лишней сложности. Подскажите: кто основные пользователи, какую ключевую задачу решает сервис, какие функции обязательны для запуска и нужны ли платежи или внешние интеграции?",
+      "После уточнений предложу состав MVP, архитектуру, этапы и оценку.",
+    ].join("\n\n"),
+  },
+  {
+    id: "automation",
+    label: "Автоматизация и парсеры",
+    keywords: ["автоматизац", "парсер", "парсинг", "сбор данных", "обработка данных", "скрипт", "выгрузк", "загрузк данных"],
+    reply: [
+      "Здравствуйте! Автоматизирую повторяющиеся операции и разрабатываю парсеры: сбор, очистка, сопоставление, обработка и выгрузка данных по расписанию.",
+      "Готов предложить надёжный сценарий с журналом ошибок и контролем результата. Уточните, пожалуйста: откуда нужно получать данные, в каком объёме и формате, куда передавать результат, как часто запускать обработку и требуется ли авторизация на источнике?",
+      "По этим данным оценю способ реализации, срок и стоимость.",
+    ].join("\n\n"),
+  },
+  {
+    id: "bots",
+    label: "Telegram и MAX-боты",
+    keywords: ["telegram", "телеграм", "чат-бот", "чат бот", "max-бот", "max бот", "бот для", "бот в", "создать бота", "разработать бота"],
+    reply: [
+      "Здравствуйте! Разрабатываю Telegram- и MAX-ботов для заявок, уведомлений, поддержки, внутренних процессов и работы с личным кабинетом.",
+      "Могу реализовать сценарии, роли, кнопки, оплату и интеграцию с CRM или вашей системой. Подскажите: что должен уметь бот, кто им будет пользоваться, где хранятся данные и нужна ли веб-админка для управления?",
+      "После уточнений предложу логику диалогов, этапы и оценку разработки.",
+    ].join("\n\n"),
+  },
+  {
+    id: "integrations",
+    label: "Интеграции и API",
+    keywords: ["api", "апи", "интеграц", "webhook", "вебхук", "1с", "обмен данными", "платежн"],
+    reply: [
+      "Здравствуйте! Занимаюсь интеграциями через API: 1С, CRM, платежи, доставка, маркетплейсы, внешние сервисы и боты.",
+      "Готов изучить текущую схему и предложить надёжный обмен данными. Уточните, пожалуйста: какие системы нужно связать, есть ли документация и тестовый доступ, обмен односторонний или двусторонний, требуется ли работа в реальном времени?",
+      "После этого обозначу способ реализации, сроки и стоимость.",
+    ].join("\n\n"),
+  },
+  {
+    id: "landing",
+    label: "Лендинг",
+    keywords: ["лендинг", "landing", "одностранич", "посадочная страниц", "промо-страниц", "форма заявк"],
+    reply: [
+      "Здравствуйте! Разрабатываю лендинги под конкретную услугу или продукт: продуманная структура, адаптивный дизайн, формы заявок, аналитика и базовая SEO-настройка.",
+      "Могу собрать страницу под ключ и помочь выстроить блоки так, чтобы посетителю было понятно предложение и следующий шаг. Подскажите: есть ли готовые тексты и фирменный стиль, какое целевое действие нужно, куда передавать заявки и есть ли примеры сайтов, которые вам нравятся?",
+      "После уточнений предложу структуру лендинга, срок и стоимость.",
+    ].join("\n\n"),
+  },
+  {
+    id: "corporate",
+    label: "Корпоративный сайт",
+    keywords: ["корпоративный сайт", "сайт компании", "сайт организации", "многостранич", "страница услуг", "раздел услуг"],
+    reply: [
+      "Здравствуйте! Разрабатываю корпоративные сайты для компаний: услуги, кейсы, информация о компании, формы обращений, удобное управление контентом, аналитика и базовая SEO-подготовка.",
+      "Готов продумать структуру и запустить проект по этапам. Подскажите: какие разделы нужны, готовы ли тексты и фотографии, требуется ли уникальный дизайн, мультиязычность, личный кабинет или интеграция с CRM?",
+      "По ответам подготовлю карту страниц, план работ и оценку.",
+    ].join("\n\n"),
+  },
+  {
+    id: "site-work",
+    label: "Доработка сайта",
+    keywords: ["доработ", "исправ", "аудит", "ошибк", "вирус", "тильд", "tilda", "wordpress", "вордпресс", "битрикс", "ускор", "редизайн"],
+    reply: [
+      "Здравствуйте! Могу подключиться к доработке существующего сайта: провести аудит, исправить ошибки, улучшить структуру, скорость и пользовательские сценарии. Работаю с самописными проектами, WordPress, Битрикс и Tilda.",
+      "Чтобы точно оценить задачу, пришлите ссылку на сайт, его технологию, список приоритетных изменений и желаемый срок. Если есть доступ к коду или тестовой среде — это ускорит диагностику.",
+      "После первичного просмотра предложу план работ и оценку.",
+    ].join("\n\n"),
+  },
+];
+
+
+function suggestedQuickReply(lead) {
+  const sourceText = `${lead.title || ""} ${lead.raw_text || ""}`.toLowerCase();
+  const priority = ["bots", "ecommerce", "corporate", "landing", "wms", "crm", "integrations", "web-app", "automation", "site-work"];
+  return priority
+    .map((topicId) => QUICK_REPLY_TOPICS.find((topic) => topic.id === topicId))
+    .find((topic) => topic?.keywords.some((keyword) => sourceText.includes(keyword)))
+    || QUICK_REPLY_TOPICS.find((topic) => topic.id === "site-work");
+}
+
+
+function contextualQuickReply(topic, lead) {
+  const sourceText = `${lead.title || ""} ${lead.raw_text || ""}`.toLowerCase();
+
+  if (topic.id === "ecommerce" && /крипт|crypto|usdt|биткоин|ethereum/.test(sourceText)) {
+    return [
+      "Здравствуйте! Готов разработать современный интернет-магазин с каталогом, корзиной, личным кабинетом, административной панелью и оплатой криптовалютой.",
+      "Для точной оценки уточните, пожалуйста: какие криптовалюты и сети нужно поддержать, оплата будет через готовый платёжный сервис или напрямую на кошелёк, требуется ли автоматическое подтверждение платежа, готовы ли дизайн и каталог товаров?",
+      "После уточнений предложу архитектуру, этапы разработки, сроки и стоимость.",
+    ].join("\n\n");
   }
 
-  try {
-    const parsed = JSON.parse(configNode.textContent || "{}");
-
-    return {
-      ...fallbackConfig,
-      ...parsed,
-      images: { ...fallbackConfig.images, ...(parsed.images || {}) },
-      urls: { ...fallbackConfig.urls, ...(parsed.urls || {}) },
-    };
-  } catch {
-    return fallbackConfig;
+  if (topic.id === "corporate" && /lpmotor|lp motor|lpmot|\blp\b/.test(sourceText)) {
+    const contentNote = /контент есть|контент готов|готов(?:ы|ый) контент/.test(sourceText)
+      ? " Вижу, что контент уже подготовлен."
+      : "";
+    return [
+      `Здравствуйте! Готов разработать корпоративный сайт в LPmotor: продумать структуру, оформить услуги и преимущества компании, настроить виджеты, формы обращений и адаптивную версию.${contentNote}`,
+      "Уточните, пожалуйста: какие разделы должны быть на сайте, есть ли фирменный стиль и примеры по дизайну, какие виджеты и интеграции нужны, требуется ли подключение CRM и аналитики?",
+      "После уточнений подготовлю структуру страниц, план работ, сроки и стоимость.",
+    ].join("\n\n");
   }
+
+  if (topic.id === "bots" && /крипт|crypto|usdt|финансов/.test(sourceText)) {
+    return [
+      "Здравствуйте! Готов разработать Telegram-бота для финансовых операций с криптовалютой: интерактивное меню, каталог, пользовательские сценарии, уведомления и административное управление.",
+      "Для оценки уточните, пожалуйста: какие именно операции должен выполнять бот, с какими сетями или сервисами нужна интеграция, требуется ли авторизация пользователей, хранение балансов и ручная модерация операций?",
+      "После изучения ТЗ предложу безопасную архитектуру, этапы, сроки и стоимость.",
+    ].join("\n\n");
+  }
+
+  return topic.reply;
 }
 
-const processItems = [
-  {
-    number: "01",
-    title: "Разбираемся в процессе",
-    text: "Смотрим роли, заявки, данные, статусы, ограничения и точки, где бизнес теряет время.",
-  },
-  {
-    number: "02",
-    title: "Проектируем систему",
-    text: "Собираем структуру экранов, модель данных, права доступа и понятный первый релиз.",
-  },
-  {
-    number: "03",
-    title: "Запускаем и развиваем",
-    text: "Делаем backend, frontend, кабинет, отчеты, интеграции и новые версии после запуска.",
-  },
-];
 
-const services = [
-  {
-    number: "01",
-    title: "CRM и учет заявок",
-    text: "Воронки, статусы, роли, задачи, уведомления, история клиентов и управленческие отчеты.",
-  },
-  {
-    number: "02",
-    title: "WMS и фулфилмент",
-    text: "Складские процессы, приемка, отгрузка, остатки, сборка заказов и интеграции с маркетплейсами.",
-  },
-  {
-    number: "03",
-    title: "Личные кабинеты",
-    text: "Кабинеты клиентов, партнеров и сотрудников с заказами, документами, оплатами и историей.",
-  },
-  {
-    number: "04",
-    title: "Интернет-магазины",
-    text: "Каталоги, карточки товаров, корзина, оплаты, доставка, админка и обмены с учетными системами.",
-  },
-  {
-    number: "05",
-    title: "Интеграции",
-    text: "Связка сайта, склада, 1С, платежей, доставки, телефонии, почты и внешних API.",
-  },
-  {
-    number: "06",
-    title: "Оцифровка и OCR",
-    text: "Загрузка документов, распознавание, проверка, электронный архив и поиск по данным.",
-  },
-];
-
-const projects = [
-  {
-    title: "ФуллБокс",
-    type: "Фулфилмент",
-    text: "Сайт фулфилмент-оператора для селлеров маркетплейсов.",
-    url: "https://fullbox.ru/",
-    domain: "fullbox.ru",
-    image: "portfolioFullbox",
-  },
-  {
-    title: "Дом Капсул",
-    type: "Производство",
-    text: "Сайт производителя капсульной мебели с каталогом и карточками моделей.",
-    url: "https://domkapsul.ru/",
-    domain: "domkapsul.ru",
-    image: "portfolioDomkapsul",
-  },
-  {
-    title: "Nozbart",
-    type: "Оборудование",
-    text: "Сайт официального дистрибьютора оборудования для бассейнов с каталогом продукции.",
-    url: "https://nozbart-russia.ru/",
-    domain: "nozbart-russia.ru",
-    image: "portfolioNozbart",
-  },
-  {
-    title: "Союз Застройщиков",
-    type: "Недвижимость",
-    text: "Сайт компании по подбору новостроек с презентацией услуг и объектов.",
-    url: "https://soyz-zastroi.ru/",
-    domain: "soyz-zastroi.ru",
-    image: "portfolioSoyz",
-  },
-  {
-    title: "Аштанга йога",
-    type: "Услуги",
-    text: "Сайт школы с расписанием, ценами, правилами и записью на практику.",
-    url: "https://ashtanga-yoga.guru/",
-    domain: "ashtanga-yoga.guru",
-    image: "portfolioAshtanga",
-  },
-];
-
-const testimonials = [
-  {
-    role: "Собственник производства",
-    text: "Быстро разобрались в логике заявок и сделали интерфейс, которым реально удобно пользоваться каждый день.",
-  },
-  {
-    role: "Руководитель склада",
-    text: "После запуска стало проще видеть остатки, статусы и узкие места без постоянных переписок в чатах.",
-  },
-  {
-    role: "Коммерческий директор",
-    text: "Получили не просто сайт, а рабочий инструмент: заявки, роли, отчеты и понятный путь развития.",
-  },
-  {
-    role: "Операционный менеджер",
-    text: "Сначала навели порядок в процессе, потом уже собрали систему. Поэтому результат попал в задачу.",
-  },
-  {
-    role: "Основатель сервиса",
-    text: "Понравилось, что технические решения объяснялись языком бизнеса, без лишней магии и тумана.",
-  },
-  {
-    role: "Руководитель отдела продаж",
-    text: "CRM стала прозрачнее: видно историю клиента, ответственных и следующий шаг по каждой заявке.",
-  },
-  {
-    role: "Владелец интернет-магазина",
-    text: "Сайт и учетные системы наконец начали работать вместе, а не жить отдельными островами.",
-  },
-  {
-    role: "Директор по развитию",
-    text: "Первый релиз запустили без раздутого бюджета, а дальше спокойно добавляли нужные функции.",
-  },
-  {
-    role: "Проектный менеджер",
-    text: "Было ощущение партнерства: слышали ограничения бизнеса и сразу предлагали практичный вариант.",
-  },
-  {
-    role: "Руководитель документооборота",
-    text: "Оцифровка и поиск по документам сняли ручную рутину, которая раньше съедала часы команды.",
-  },
-];
-
-const stack = ["React", "Django", "FastAPI", "PostgreSQL", "Redis", "REST API", "1С", "OCR", "Docker"];
-const scrambleChars = "01<>/[]{}#$%&*@!?ЖЙЯФλΞΔ";
-const holdRhythm = [3600, 4700, 3100, 4200, 5400, 3900];
-const buildRhythm = [720, 1040, 860, 1210, 930, 1120];
-
-function clamp01(value) {
-  return Math.min(Math.max(value, 0), 1);
+function currentRoute() {
+  const value = window.location.hash.replace(/^#\/?/, "");
+  return value === "profi" || value === "freelance" ? value : "dashboard";
 }
 
-function rhythmJitter(seed, index, cycle, range) {
-  return (seed * 97 + index * 383 + cycle * 211) % range;
+
+function go(route) {
+  window.location.hash = route === "dashboard" ? "/" : `/${route}`;
 }
 
-function getLineHoldMs(seed, index, cycle) {
-  const base = holdRhythm[(seed + index + cycle) % holdRhythm.length];
-  return base + rhythmJitter(seed, index, cycle, 1200) - 420;
-}
 
-function getBuildDurationMs(seed, index, cycle) {
-  const base = buildRhythm[(seed + index * 2 + cycle) % buildRhythm.length];
-  return base + rhythmJitter(seed, index, cycle, 360);
-}
-
-function getScatterDurationMs(seed, index, cycle) {
-  return 340 + rhythmJitter(seed, index, cycle, 280);
-}
-
-function SectionTitle({ kicker, title, text }) {
-  return (
-    <div className="ls-section-title ls-reveal">
-      <p>{kicker}</p>
-      <h2>{title}</h2>
-      {text ? <span>{text}</span> : null}
-    </div>
-  );
-}
-
-function useScrollReveal() {
+function useFrontendVersionWatcher() {
   useEffect(() => {
-    const revealItems = Array.from(document.querySelectorAll(".ls-reveal"));
+    const activeScript = [...document.scripts].find((script) => /\/assets\/index-[^/]+\.js$/.test(script.src));
+    if (!activeScript) return undefined;
 
-    if (!revealItems.length) {
-      return undefined;
+    const activeAsset = new URL(activeScript.src).pathname;
+    let checking = false;
+    let stopped = false;
+
+    async function checkVersion() {
+      if (checking || stopped) return;
+      checking = true;
+      try {
+        const indexUrl = new URL(window.location.href);
+        indexUrl.hash = "";
+        indexUrl.search = `?app-check=${Date.now()}`;
+        const response = await fetch(indexUrl, { credentials: "same-origin", cache: "no-store" });
+        if (!response.ok) return;
+        const html = await response.text();
+        const match = html.match(/<script[^>]+src="([^"]*\/assets\/index-[^"]+\.js)"/i);
+        if (!match) return;
+        const nextAsset = new URL(match[1], indexUrl).pathname;
+        if (nextAsset === activeAsset) return;
+
+        const reloadUrl = new URL(window.location.href);
+        reloadUrl.searchParams.set("app-version", nextAsset.split("/").pop());
+        window.location.replace(reloadUrl.toString());
+      } catch {
+        // Потеря сети не должна мешать работе радара; повторим проверку позже.
+      } finally {
+        checking = false;
+      }
     }
 
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (prefersReducedMotion || !("IntersectionObserver" in window)) {
-      revealItems.forEach((item) => item.classList.add("is-visible"));
-      return undefined;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) {
-            return;
-          }
-
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        });
-      },
-      {
-        rootMargin: "0px 0px -9% 0px",
-        threshold: 0.12,
-      },
-    );
-
-    revealItems.forEach((item) => observer.observe(item));
-
-    return () => observer.disconnect();
+    const interval = window.setInterval(checkVersion, 45000);
+    window.addEventListener("focus", checkVersion);
+    return () => {
+      stopped = true;
+      window.clearInterval(interval);
+      window.removeEventListener("focus", checkVersion);
+    };
   }, []);
 }
 
-function getScrambledText(text, progress, tick, seed) {
-  const letters = Array.from(text);
 
-  return letters
-    .map((letter, index) => {
-      if (letter === " ") {
-        return " ";
-      }
+function Login({ onLogin }) {
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
-      const revealAt = (index + 1) / letters.length;
-      const jitter = (((seed + index * 13) % 9) - 4) * 0.018;
-
-      if (progress >= revealAt + jitter) {
-        return letter;
-      }
-
-      return scrambleChars[(index * 7 + tick * 3 + seed + letters.length) % scrambleChars.length];
-    })
-    .join("");
-}
-
-function ScrambleText({ className, text, delay = 0, duration = 860, seed = 0, direction = "in" }) {
-  const [output, setOutput] = useState("");
-  const [isSettled, setIsSettled] = useState(false);
-
-  useEffect(() => {
-    let frameId = 0;
-    let timerId = 0;
-
-    setOutput("");
-    setIsSettled(false);
-
-    timerId = window.setTimeout(() => {
-      const startedAt = window.performance.now();
-      let maxProgress = 0;
-
-      const run = (now) => {
-        const elapsed = now - startedAt;
-        const rawProgress = clamp01(elapsed / duration);
-        const pace = Math.pow(rawProgress, 0.72 + ((seed % 5) * 0.07));
-        const pulse =
-          Math.sin(elapsed / (74 + (seed % 37))) * 0.028 +
-          Math.sin(elapsed / (151 + (seed % 53))) * 0.035;
-        const progress = clamp01(Math.max(maxProgress, pace + pulse));
-        const frameSpeed = 28 + ((Math.floor(elapsed / 170) + seed) % 7) * 11;
-        const tick = Math.floor((now + seed * 19) / frameSpeed);
-
-        maxProgress = progress;
-
-        if (direction === "out") {
-          setOutput(rawProgress >= 1 ? "" : getScrambledText(text, 1 - rawProgress, tick, seed));
-        } else {
-          setOutput(rawProgress >= 1 ? text : getScrambledText(text, progress, tick, seed));
-        }
-
-        if (rawProgress < 1) {
-          frameId = window.requestAnimationFrame(run);
-        } else {
-          setIsSettled(direction === "in");
-        }
-      };
-
-      frameId = window.requestAnimationFrame(run);
-    }, delay * 1000);
-
-    return () => {
-      window.clearTimeout(timerId);
-      window.cancelAnimationFrame(frameId);
-    };
-  }, [delay, direction, duration, seed, text]);
+  async function submit(event) {
+    event.preventDefault();
+    setBusy(true);
+    setError("");
+    try {
+      await api("api/auth/login/", { method: "POST", body: JSON.stringify({ password }) });
+      onLogin();
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
-    <span className={`${className}${isSettled ? " is-settled" : " is-scrambling"}`}>
-      {output}
-    </span>
-  );
-}
-
-function PhotoCard({ className, image, alt, label, lines, delay = 0, rhythmSeed = 1 }) {
-  const [lineState, setLineState] = useState({ index: 0, cycle: 0, direction: "in" });
-  const [showLine, setShowLine] = useState(false);
-
-  useEffect(() => {
-    const timers = [];
-    let index = 0;
-    let cycle = 0;
-
-    const addTimer = (callback, timeout) => {
-      const timerId = window.setTimeout(callback, timeout);
-      timers.push(timerId);
-    };
-
-    setLineState({ index: 0, cycle: 0, direction: "in" });
-    setShowLine(false);
-
-    const firstLineDelay = (delay + 1.08 + (rhythmSeed % 7) * 0.06) * 1000;
-
-    const scheduleNextLine = () => {
-      const holdMs = getLineHoldMs(rhythmSeed, index, cycle);
-
-      addTimer(() => {
-        setLineState({ index, cycle, direction: "out" });
-
-        addTimer(() => {
-          index = (index + 1) % lines.length;
-          cycle += 1;
-          setLineState({ index, cycle, direction: "in" });
-          scheduleNextLine();
-        }, getScatterDurationMs(rhythmSeed, index, cycle));
-      }, holdMs);
-    };
-
-    addTimer(() => {
-      setShowLine(true);
-      scheduleNextLine();
-    }, firstLineDelay);
-
-    return () => {
-      timers.forEach((timerId) => window.clearTimeout(timerId));
-    };
-  }, [delay, lines.length, rhythmSeed]);
-
-  const lineDuration = getBuildDurationMs(rhythmSeed, lineState.index, lineState.cycle);
-  const lineText = lines[lineState.index];
-
-  return (
-    <figure className={`ls-photo ${className}`} style={{ "--photo-delay": `${delay}s` }}>
-      <img src={image} alt={alt} />
-      <figcaption className="ls-photo-caption">
-        <ScrambleText
-          className="ls-photo-label"
-          text={label}
-          delay={delay + 0.45 + (rhythmSeed % 5) * 0.05}
-          duration={760 + (rhythmSeed % 4) * 180}
-          seed={rhythmSeed}
-        />
-        <strong className="ls-photo-lines">
-          {showLine ? (
-            <ScrambleText
-              key={`${className}-${lineState.index}-${lineState.cycle}-${lineState.direction}`}
-              className="ls-photo-line"
-              text={lineText}
-              duration={lineState.direction === "out" ? getScatterDurationMs(rhythmSeed, lineState.index, lineState.cycle) : lineDuration}
-              seed={rhythmSeed + lineState.index * 19 + lineState.cycle * 31}
-              direction={lineState.direction}
+    <main className="login-shell">
+      <section className="login-card">
+        <div className="brand-mark">AL</div>
+        <p className="eyebrow">Личный рабочий контур</p>
+        <h1>AI_Lapin</h1>
+        <p className="lede">Заявки, радары и быстрый разбор проектов в одном защищённом интерфейсе.</p>
+        <form onSubmit={submit}>
+          <label>
+            <span>Пароль доступа</span>
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              autoFocus
+              autoComplete="current-password"
             />
-          ) : null}
-        </strong>
-      </figcaption>
-    </figure>
+          </label>
+          {error && <div className="alert error">{error}</div>}
+          <button className="primary wide" disabled={busy}>{busy ? "Проверяю…" : "Войти"}</button>
+        </form>
+      </section>
+    </main>
   );
 }
 
-function Hero({ config }) {
+
+function AppHeader({ route, onLogout }) {
   return (
-    <section className="ls-hero">
-      <div className="ls-hero-grid" aria-hidden="true" />
-      <div className="ls-shell ls-hero-canvas">
-        <PhotoCard
-          className="ls-photo-founder"
-          image={config.images.founder}
-          alt="Опыт в бизнес-процессах"
-          label="Опыт"
-          lines={[
-            "Бизнес-процессы",
-            "Учет и заявки",
-            "Склады и остатки",
-            "Регламенты",
-            "Ответственность",
-          ]}
-          delay={0.08}
-          rhythmSeed={13}
-        />
-
-        <PhotoCard
-          className="ls-photo-next"
-          image={config.images.nextGen}
-          alt="Новый взгляд на современные технологии"
-          label="Новый взгляд"
-          lines={[
-            "Современные интерфейсы",
-            "Архитектура",
-            "AI и автоматизация",
-            "Быстрые прототипы",
-            "Чистый код",
-          ]}
-          delay={0.22}
-          rhythmSeed={31}
-        />
-
-        <div className="ls-hero-title">
-          <h1>Автоматизируем ежедневные процессы бизнеса</h1>
-        </div>
-
-        <div className="ls-hero-brief">
-          <p>
-            Создаем CRM, WMS, личные кабинеты, сервисные платформы, интернет-магазины и интеграции.
-            Соединяем опыт в бизнес-процессах с новым взглядом на современные технологии.
-          </p>
-          <div className="ls-actions">
-            <a className="ls-button ls-button-primary" href={config.urls.contact}>
-              <ArrowRight size={18} aria-hidden="true" />
-              Обсудить задачу
-            </a>
-            <a className="ls-button" href={config.urls.industrial}>
-              <Archive size={18} aria-hidden="true" />
-              Оцифровка
-            </a>
-            <a className="ls-button" href={config.urls.cabinet}>
-              <LogIn size={18} aria-hidden="true" />
-              {config.cabinetLabel}
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div className="ls-shell ls-tags" aria-label="Направления">
-        <span>CRM</span>
-        <span>WMS</span>
-        <span>Фулфилмент</span>
-        <span>B2B-порталы</span>
-        <span>Интеграции</span>
-        <span>OCR</span>
-      </div>
-    </section>
+    <header className="app-header">
+      <button className="identity" onClick={() => go("dashboard")}>
+        <span className="brand-mark small">AL</span>
+        <span><strong>AI_Lapin</strong><small>operations console</small></span>
+      </button>
+      <nav>
+        <button className={route === "dashboard" ? "active" : ""} onClick={() => go("dashboard")}>Обзор</button>
+        <button className={route === "profi" ? "active" : ""} onClick={() => go("profi")}>Profi</button>
+        <button className={route === "freelance" ? "active" : ""} onClick={() => go("freelance")}>Freelance</button>
+      </nav>
+      <button className="ghost" onClick={onLogout}>Выйти</button>
+    </header>
   );
 }
 
-function Process() {
+
+function Dashboard() {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    api("api/dashboard/").then(setData).catch((requestError) => setError(requestError.message));
+  }, []);
+
+  const stats = data?.stats || {};
   return (
-    <section id="about" className="ls-section ls-shell">
-      <SectionTitle
-        kicker="Как работаем"
-        title="От задачи до работающей системы"
-        text="Сначала разбираем процесс, потом запускаем первый полезный релиз и развиваем его."
-      />
-      <div className="ls-grid-cards ls-grid-cards-three">
-        {processItems.map((item, index) => (
-          <article
-            key={item.number}
-            className="ls-reveal"
-            style={{ "--reveal-delay": `${0.08 + index * 0.08}s` }}
-          >
-            <span>{item.number}</span>
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
+    <main className="page dashboard-page">
+      <section className="hero">
+        <div>
+          <p className="eyebrow">Рабочий день · единый радар</p>
+          <h1>Нужные проекты<br />без информационного шума.</h1>
+        </div>
+        <p className="hero-note">Два независимых браузерных профиля, общая модель заявок и единый скоринг в PostgreSQL.</p>
+      </section>
+
+      {error && <div className="alert error">{error}</div>}
+
+      <section className="metric-grid">
+        {[
+          ["Сегодня", stats.today ?? "—"],
+          ["Входящие", stats.inbox ?? "—"],
+          ["Проекты", stats.projects ?? "—"],
+          ["Риски", stats.risks ?? "—"],
+          ["Profi ≥ 38", stats.profi ?? "—"],
+          ["Freelance ≥ 38", stats.freelance ?? "—"],
+        ].map(([label, value]) => <article className="metric" key={label}><span>{label}</span><strong>{value}</strong></article>)}
+      </section>
+
+      <section className="platform-grid">
+        {Object.values(PLATFORMS).map((platform) => (
+          <article className={`platform-card ${platform.accent}`} key={platform.key}>
+            <div className="platform-index">0{platform.key === "profi" ? 1 : 2}</div>
+            <p className="eyebrow">{platform.eyebrow}</p>
+            <h2>{platform.label}</h2>
+            <p>Изолированная сессия, мониторинг новых карточек, AI-оценка и черновик ответа.</p>
+            <button className="primary" onClick={() => go(platform.key)}>Открыть радар <span>↗</span></button>
           </article>
         ))}
-      </div>
-    </section>
+      </section>
+
+      <section className="recent-panel">
+        <div className="section-head">
+          <div><p className="eyebrow">Общий поток</p><h2>Последние заявки</h2></div>
+          <span className="live-dot">PostgreSQL</span>
+        </div>
+        <div className="lead-table">
+          {(data?.recent_leads || []).map((lead) => (
+            <a href={lead.source_url || undefined} target={lead.source_url ? "_blank" : undefined} rel="noreferrer" key={`${lead.source}-${lead.id}`}>
+              <span className={`source-badge ${lead.source}`}>{lead.source_label}</span>
+              <strong>{lead.title}</strong>
+              <span>{lead.verdict || "Ручная проверка"}</span>
+              <b>{lead.score}</b>
+            </a>
+          ))}
+          {data && !data.recent_leads.length && <div className="empty-state">Новых заявок пока нет.</div>}
+        </div>
+      </section>
+    </main>
   );
 }
 
-function Projects({ images }) {
-  const viewportRef = useRef(null);
-  const trackRef = useRef(null);
-  const motionRef = useRef({
-    offset: 0,
-    loopWidth: 0,
-    lastTime: 0,
-    rafId: 0,
-    isDragging: false,
-    pointerId: null,
-    startX: 0,
-    lastX: 0,
-    moved: false,
-    resumeAt: 0,
-  });
-  const [isDragging, setIsDragging] = useState(false);
-  const projectLoop = [...projects, ...projects];
 
-  const applyProjectPosition = useCallback(() => {
-    const state = motionRef.current;
-    const track = trackRef.current;
-
-    if (!track) {
-      return;
-    }
-
-    if (state.loopWidth > 0) {
-      state.offset = ((state.offset % state.loopWidth) + state.loopWidth) % state.loopWidth;
-    }
-
-    track.style.transform = `translate3d(${-state.offset}px, 0, 0)`;
-  }, []);
+function LeadCard({ lead }) {
+  const quickReplies = lead.quick_replies || [];
+  const suggestedTopic = quickReplies.find((topic) => topic.id === lead.suggested_reply_id)
+    || quickReplies.find((topic) => topic.suggested)
+    || quickReplies[0]
+    || { id: "", label: "", reply: "" };
+  const [selectedTopicId, setSelectedTopicId] = useState(suggestedTopic.id);
+  const [copied, setCopied] = useState("");
+  const selectedTopic = quickReplies.find((topic) => topic.id === selectedTopicId) || suggestedTopic;
+  const selectedReply = selectedTopic.reply || "";
 
   useEffect(() => {
-    const state = motionRef.current;
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setSelectedTopicId(suggestedTopic.id);
+  }, [lead.id, suggestedTopic.id]);
 
-    const measure = () => {
-      const track = trackRef.current;
-
-      if (!track) {
-        return;
-      }
-
-      state.loopWidth = track.scrollWidth / 2;
-      applyProjectPosition();
-    };
-
-    const tick = (time) => {
-      if (!state.lastTime) {
-        state.lastTime = time;
-      }
-
-      const delta = Math.min(time - state.lastTime, 40);
-      state.lastTime = time;
-
-      if (
-        !prefersReducedMotion.matches &&
-        !state.isDragging &&
-        state.pointerId === null &&
-        time >= state.resumeAt &&
-        state.loopWidth > 0
-      ) {
-        state.offset += (state.loopWidth / 38000) * delta;
-      }
-
-      applyProjectPosition();
-      state.rafId = window.requestAnimationFrame(tick);
-    };
-
-    measure();
-    window.addEventListener("resize", measure);
-    state.rafId = window.requestAnimationFrame(tick);
-
-    return () => {
-      window.removeEventListener("resize", measure);
-      window.cancelAnimationFrame(state.rafId);
-    };
-  }, [applyProjectPosition]);
-
-  const handleProjectPointerDown = useCallback((event) => {
-    if (event.button !== undefined && event.button !== 0) {
-      return;
-    }
-
-    const state = motionRef.current;
-
-    state.pointerId = event.pointerId;
-    state.startX = event.clientX;
-    state.lastX = event.clientX;
-    state.moved = false;
-    state.resumeAt = Number.POSITIVE_INFINITY;
-  }, []);
-
-  const handleProjectPointerMove = useCallback(
-    (event) => {
-      const state = motionRef.current;
-
-      if (state.pointerId !== event.pointerId) {
-        return;
-      }
-
-      const totalDelta = event.clientX - state.startX;
-
-      if (!state.isDragging && Math.abs(totalDelta) < 10) {
-        return;
-      }
-
-      if (!state.isDragging) {
-        state.isDragging = true;
-        state.moved = true;
-        setIsDragging(true);
-        viewportRef.current?.setPointerCapture?.(event.pointerId);
-      }
-
-      const dragDelta = event.clientX - state.lastX;
-      state.lastX = event.clientX;
-      state.offset -= dragDelta;
-
-      applyProjectPosition();
-      event.preventDefault();
-    },
-    [applyProjectPosition],
-  );
-
-  const finishProjectDrag = useCallback((event) => {
-    const state = motionRef.current;
-    const viewport = viewportRef.current;
-
-    if (!state.isDragging || state.pointerId !== event.pointerId) {
-      if (state.pointerId === event.pointerId) {
-        state.pointerId = null;
-        state.resumeAt = window.performance.now() + 250;
-      }
-
-      return;
-    }
-
-    state.isDragging = false;
-    state.pointerId = null;
-    state.resumeAt = window.performance.now() + 1200;
-    setIsDragging(false);
-    viewport?.releasePointerCapture?.(event.pointerId);
-  }, []);
-
-  const handleProjectClickCapture = useCallback((event) => {
-    const state = motionRef.current;
-
-    if (!state.moved) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-    window.setTimeout(() => {
-      state.moved = false;
-    }, 0);
-  }, []);
+  async function copyText(text, kind) {
+    await navigator.clipboard.writeText(text || "");
+    setCopied(kind);
+    setTimeout(() => setCopied(""), 1200);
+  }
 
   return (
-    <section id="cases" className="ls-section ls-shell">
-      <SectionTitle
-        kicker="Проекты"
-        title="Работы, которые можно открыть"
-        text="Не концепты и не красивые картинки, а реальные сайты с понятной задачей."
-      />
-      <div className="ls-projects-reveal ls-reveal" style={{ "--reveal-delay": "0.12s" }}>
-        <div
-          ref={viewportRef}
-          className={`ls-projects${isDragging ? " is-dragging" : ""}`}
-          aria-label="Наши работы"
-          onClickCapture={handleProjectClickCapture}
-          onPointerCancel={finishProjectDrag}
-          onPointerDown={handleProjectPointerDown}
-          onPointerMove={handleProjectPointerMove}
-          onPointerUp={finishProjectDrag}
-        >
-          <div ref={trackRef} className="ls-project-track">
-            {projectLoop.map((project, index) => (
-              <article key={`${project.domain}-${index}`} className="ls-project">
-                <a href={project.url} target="_blank" rel="noopener noreferrer">
-                  <img src={images[project.image]} alt={`Сайт ${project.title}`} />
-                  <span>
-                    {project.domain}
-                    <ExternalLink size={14} aria-hidden="true" />
-                  </span>
-                </a>
-                <div>
-                  <p>{project.type}</p>
-                  <h3>{project.title}</h3>
-                  <strong>{project.text}</strong>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
+    <article className="lead-card">
+      <div className="lead-title">
+        <div><strong>{lead.title}</strong><span>{lead.verdict} · {lead.updated_at}</span></div>
+        <b>{lead.score}</b>
       </div>
-    </section>
-  );
-}
-
-function Testimonials() {
-  const testimonialLoop = [...testimonials, ...testimonials];
-
-  return (
-    <section className="ls-section ls-shell ls-testimonials-section">
-      <SectionTitle
-        kicker="Отзывы"
-        title="Что ценят клиенты"
-        text="Коротко о том, что остается после запуска: порядок в процессах, ясные статусы и рабочая система."
-      />
-      <div className="ls-testimonials ls-reveal" style={{ "--reveal-delay": "0.12s" }}>
-        <div className="ls-testimonial-track">
-          {testimonialLoop.map((item, index) => (
-            <article className="ls-testimonial" key={`${item.role}-${index}`}>
-              <p>{item.text}</p>
-              <span>{item.role}</span>
-            </article>
+      {lead.ai_notes && <p className="notes">{lead.ai_notes}</p>}
+      {quickReplies.length > 0 && <section className="quick-reply-box">
+        <div className="quick-reply-head">
+          <strong>Быстрый ответ</strong>
+          <span>Рекомендовано: {suggestedTopic.label}</span>
+        </div>
+        <div className="quick-reply-topics" aria-label="Тема быстрого ответа">
+          {quickReplies.map((topic) => (
+            <button
+              className={selectedTopic.id === topic.id ? "active" : ""}
+              key={topic.id}
+              onClick={() => setSelectedTopicId(topic.id)}
+              type="button"
+            >
+              {topic.label}
+            </button>
           ))}
         </div>
+        <div className="draft quick-draft">{selectedReply}</div>
+      </section>}
+      {lead.draft_reply && (
+        <details className="ai-draft">
+          <summary>AI-черновик заявки</summary>
+          <div className="draft">{lead.draft_reply}</div>
+        </details>
+      )}
+      <div className="lead-actions">
+        {lead.source_url && <a href={lead.source_url} target="_blank" rel="noreferrer">Открыть проект</a>}
+        {selectedReply && (
+          <button className="quick-copy" onClick={() => copyText(selectedReply, "quick")}>
+            {copied === "quick" ? "Скопировано" : "Скопировать быстрый ответ"}
+          </button>
+        )}
+        {lead.draft_reply && (
+          <button onClick={() => copyText(lead.draft_reply, "ai")}>
+            {copied === "ai" ? "Скопировано" : "Копировать AI-черновик"}
+          </button>
+        )}
       </div>
-    </section>
+    </article>
   );
 }
 
-function Services() {
-  return (
-    <section id="services" className="ls-section ls-shell">
-      <SectionTitle
-        kicker="Услуги"
-        title="Системы под реальные операции"
-        text="Делаем интерфейсы, где есть данные, роли, статусы, интеграции и развитие после первого релиза."
-      />
-      <div className="ls-grid-cards">
-        {services.map((service, index) => (
-          <article
-            key={service.number}
-            className="ls-reveal"
-            style={{ "--reveal-delay": `${0.06 + index * 0.07}s` }}
-          >
-            <span>{service.number}</span>
-            <h3>{service.title}</h3>
-            <p>{service.text}</p>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
 
-function Stack() {
-  return (
-    <section className="ls-section ls-shell">
-      <SectionTitle
-        kicker="Технологии"
-        title="Стек для надежных бизнес-систем"
-        text="Frontend, backend, базы данных, очереди, API и интеграции собираются в одну рабочую архитектуру."
-      />
-      <div className="ls-stack" aria-label="Технологии">
-        {stack.map((item, index) => (
-          <span
-            key={item}
-            className="ls-reveal"
-            style={{ "--reveal-delay": `${0.04 + index * 0.045}s` }}
-          >
-            {item}
-          </span>
-        ))}
-      </div>
-    </section>
-  );
-}
+function PlatformRadar({ platform }) {
+  const [data, setData] = useState({ status: {}, leads: [] });
+  const [targetUrl, setTargetUrl] = useState(platform.defaultUrl);
+  const [input, setInput] = useState("");
+  const [threshold, setThreshold] = useState(51);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState("");
+  const [screenTick, setScreenTick] = useState(Date.now());
 
-function Contact({ config }) {
+  const serverUrl = platform.apiBase;
+  const screenshotUrl = useMemo(
+    () => `${endpoint(`${serverUrl}screenshot.png`)}?t=${screenTick}`,
+    [screenTick, serverUrl],
+  );
+
+  const refreshState = useCallback(async () => {
+    try {
+      const payload = await api(serverUrl);
+      setData(payload);
+      if (payload.status?.url) setTargetUrl(payload.status.url);
+      setError(payload.status?.last_error || "");
+    } catch (requestError) {
+      setError(requestError.message);
+    }
+  }, [serverUrl]);
+
+  useEffect(() => {
+    setData({ status: {}, leads: [] });
+    setTargetUrl(platform.defaultUrl);
+    refreshState();
+  }, [platform.defaultUrl, refreshState]);
+
+  useEffect(() => {
+    const stateTimer = setInterval(refreshState, 3000);
+    const screenTimer = setInterval(() => {
+      if (data.status?.started) setScreenTick(Date.now());
+    }, 1600);
+    return () => {
+      clearInterval(stateTimer);
+      clearInterval(screenTimer);
+    };
+  }, [data.status?.started, refreshState]);
+
+  async function command(action, payload = {}) {
+    setBusy(action);
+    setError("");
+    try {
+      const result = await api(serverUrl, {
+        method: "POST",
+        body: JSON.stringify({ action, ...payload }),
+      });
+      setData((current) => ({
+        status: result.status || current.status,
+        leads: result.leads || current.leads,
+      }));
+      if (result.status?.url) setTargetUrl(result.status.url);
+      setScreenTick(Date.now());
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setBusy("");
+    }
+  }
+
+  function clickScreen(event) {
+    const image = event.currentTarget;
+    if (!image.naturalWidth || !image.naturalHeight) return;
+    const rect = image.getBoundingClientRect();
+    command("click", {
+      x: (event.clientX - rect.left) * (image.naturalWidth / rect.width),
+      y: (event.clientY - rect.top) * (image.naturalHeight / rect.height),
+    });
+  }
+
+  const status = data.status || {};
   return (
-    <section id="contact" className="ls-section ls-shell">
-      <div className="ls-contact ls-reveal">
-        <div>
-          <p className="ls-kicker">Контакт</p>
-          <h2>Расскажите о задаче — отвечу в тот же день</h2>
-          <span>
-            Опишите, что сейчас ведется вручную, где теряются данные и какие системы нужно связать.
-            Вернемся с понятным первым шагом.
-          </span>
+    <main className={`page radar-page ${platform.accent}`}>
+      <section className="radar-heading">
+        <div><p className="eyebrow">{platform.eyebrow}</p><h1>{platform.label}</h1></div>
+        <div className="status-stack">
+          <span className={status.started ? "online" : "offline"}>{status.started ? "browser on" : "browser off"}</span>
+          <span className={status.monitor_active ? "online" : "offline"}>{status.monitor_active ? "monitor on" : "monitor off"}</span>
         </div>
-        <div className="ls-contact-actions">
-          <a className="ls-button ls-button-primary" href={config.urls.phone}>
-            <Phone size={18} aria-hidden="true" />
-            Позвонить
-          </a>
-          <a className="ls-button" href={config.urls.industrial}>
-            <Archive size={18} aria-hidden="true" />
-            Промышленная оцифровка
-          </a>
-          <a className="ls-button" href={config.urls.cabinet}>
-            <LogIn size={18} aria-hidden="true" />
-            Вход в кабинет
-          </a>
+      </section>
+
+      {error && <div className="alert error">{error}</div>}
+
+      <section className="radar-layout">
+        <div className="browser-column">
+          <form className="address-bar" onSubmit={(event) => { event.preventDefault(); command("goto", { url: targetUrl }); }}>
+            <button type="button" onClick={() => command("back")}>←</button>
+            <input value={targetUrl} onChange={(event) => setTargetUrl(event.target.value)} aria-label="Адрес" />
+            <button type="button" onClick={() => command("reload")}>↻</button>
+            <button className="primary" disabled={Boolean(busy)}>Открыть</button>
+            {status.started && <button type="button" onClick={() => command("stop")}>Стоп</button>}
+          </form>
+          <div className="phone-frame">
+            <div className="phone-speaker" />
+            {status.started ? (
+              <img src={screenshotUrl} alt={`${platform.label} в серверном браузере`} onClick={clickScreen} onWheel={(event) => { event.preventDefault(); command("scroll", { delta_y: event.deltaY }); }} />
+            ) : (
+              <div className="phone-empty">
+                <span>Серверный браузер остановлен</span>
+                <button className="primary" onClick={() => command("start")}>Запустить</button>
+              </div>
+            )}
+          </div>
+            <form className="remote-input" onSubmit={(event) => { event.preventDefault(); if (input) { command("type", { text: input }); setInput(""); } }}>
+            <input value={input} onChange={(event) => setInput(event.target.value)} placeholder="Текст для активного поля браузера" />
+            <button type="button" onClick={() => command("press", { key: "Backspace" })}>⌫</button>
+            <button type="button" onClick={() => command("press", { key: "Enter" })}>Enter</button>
+            <button className="primary">Ввести</button>
+          </form>
         </div>
-      </div>
-    </section>
+
+        <div className="agent-column">
+          <section className="control-panel">
+            <div className="section-head"><div><p className="eyebrow">Наблюдение</p><h2>Автоскан</h2></div><span>{status.next_scan_at ? `следующий ${status.next_scan_at}` : "ожидает"}</span></div>
+            <div className="scan-controls">
+              <label><span>Порог</span><input type="number" min="0" max="100" value={threshold} onChange={(event) => setThreshold(Number(event.target.value))} /></label>
+              <button className="primary" onClick={() => command("monitor_start")}>Старт</button>
+              <button onClick={() => command("monitor_stop")}>Стоп</button>
+              <button onClick={() => command("scan", { refresh: true, force: true, threshold })}>Скан сейчас</button>
+            </div>
+            <p className="scan-summary">{status.last_scan_summary || "После запуска радар запомнит верхние карточки и будет искать изменения."}</p>
+            <div className="event-list">
+              {(status.events || []).map((event, index) => <div className={`event ${event.kind || ""}`} key={`${event.created_at}-${index}`}><time>{event.created_at}</time><span>{event.message}</span></div>)}
+            </div>
+          </section>
+
+          <section className="leads-panel">
+            <div className="section-head"><div><p className="eyebrow">Результат</p><h2>Последние заявки</h2></div><b>{data.leads?.length || 0}</b></div>
+            <div className="lead-list">
+              {(data.leads || []).map((lead) => <LeadCard lead={lead} key={lead.id} />)}
+              {!data.leads?.length && <div className="empty-state">Запусти браузер и сделай первый скан.</div>}
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
   );
 }
 
-function HomeApp() {
-  const config = readConfig();
-  useScrollReveal();
+
+function App() {
+  useFrontendVersionWatcher();
+  const [authenticated, setAuthenticated] = useState(null);
+  const [route, setRoute] = useState(currentRoute());
+
+  const refreshAuth = useCallback(async () => {
+    try {
+      const payload = await api("api/auth/status/");
+      setCsrfToken(payload.csrf_token);
+      setAuthenticated(payload.authenticated);
+    } catch {
+      setAuthenticated(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshAuth();
+    const updateRoute = () => setRoute(currentRoute());
+    window.addEventListener("hashchange", updateRoute);
+    return () => window.removeEventListener("hashchange", updateRoute);
+  }, [refreshAuth]);
+
+  async function logout() {
+    await api("api/auth/logout/", { method: "POST", body: "{}" });
+    setAuthenticated(false);
+  }
+
+  if (authenticated === null) return <main className="loading">AI_Lapin</main>;
+  if (!authenticated) return <Login onLogin={() => setAuthenticated(true)} />;
 
   return (
-    <div className="ls-home">
-      <Hero config={config} />
-      <Projects images={config.images} />
-      <Testimonials />
-      <Services />
-      <Process />
-      <Stack />
-      <Contact config={config} />
-      <a className="ls-floating-contact" href={config.urls.contact} aria-label="Обсудить задачу">
-        Обсудить задачу
-        <ArrowRight size={16} aria-hidden="true" />
-      </a>
+    <div className="app-shell">
+      <AppHeader route={route} onLogout={logout} />
+      {route === "dashboard" ? <Dashboard /> : <PlatformRadar platform={PLATFORMS[route]} />}
     </div>
   );
 }
 
-createRoot(document.getElementById("lapin-home-root")).render(<HomeApp />);
+
+createRoot(document.getElementById("root")).render(<App />);
