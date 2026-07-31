@@ -1,0 +1,12 @@
+[Unit]
+Description=Poll GitHub and deploy AI_Lapin when ai-lapin-prod changes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=2min
+RandomizedDelaySec=30s
+Persistent=true
+Unit=ai-lapin-deploy.service
+
+[Install]
+WantedBy=timers.target

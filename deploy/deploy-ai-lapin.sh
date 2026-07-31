@@ -16,6 +16,11 @@ if [[ ! -d "$APP_DIR/.git" ]]; then
   git -C "$APP_DIR" remote add origin "$REPO_URL"
 fi
 
+old_rev=""
+if git -C "$APP_DIR" rev-parse --verify HEAD >/dev/null 2>&1; then
+  old_rev="$(git -C "$APP_DIR" rev-parse HEAD)"
+fi
+
 log "Fetching $REPO_URL $BRANCH"
 git -C "$APP_DIR" remote set-url origin "$REPO_URL"
 git -C "$APP_DIR" fetch --prune origin "$BRANCH"
@@ -31,6 +36,12 @@ git -C "$APP_DIR" clean -fd \
   -e frontend/dist \
   -e staticfiles \
   -e db.sqlite3
+
+new_rev="$(git -C "$APP_DIR" rev-parse HEAD)"
+if [[ "${FORCE_DEPLOY:-0}" != "1" && -n "$old_rev" && "$old_rev" == "$new_rev" ]]; then
+  log "Already at $new_rev; nothing to deploy"
+  exit 0
+fi
 
 if [[ ! -d "$APP_DIR/venv" ]]; then
   log "Creating Python virtual environment"

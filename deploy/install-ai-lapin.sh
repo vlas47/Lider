@@ -165,6 +165,11 @@ fi
 "$APP_DIR/venv/bin/python" "$APP_DIR/manage.py" collectstatic --noinput
 
 cp "$APP_DIR/deploy/ai-lapin.service" "$SERVICE_FILE"
+cp "$APP_DIR/deploy/ai-lapin-deploy.service" /etc/systemd/system/ai-lapin-deploy.service
+cp "$APP_DIR/deploy/ai-lapin-deploy.timer" /etc/systemd/system/ai-lapin-deploy.timer
+cp "$APP_DIR/deploy/ai-lapin-deploy.sudoers" /etc/sudoers.d/ai-lapin-deploy
+chmod 440 /etc/sudoers.d/ai-lapin-deploy
+visudo -cf /etc/sudoers.d/ai-lapin-deploy
 cp "$APP_DIR/deploy/nginx-ai-lapin-location.conf" "$NGINX_SNIPPET"
 
 if [[ ! -f "$NGINX_SITE" ]]; then
@@ -221,6 +226,7 @@ chmod 0750 "$APP_DIR"/deploy/*.sh
 chmod 640 "$APP_DIR/.env"
 systemctl daemon-reload
 systemctl enable --now ai-lapin.service
+systemctl enable --now ai-lapin-deploy.timer
 nginx -t
 systemctl reload nginx
 
