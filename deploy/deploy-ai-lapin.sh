@@ -71,6 +71,15 @@ log "Running Django checks"
 "$APP_DIR/venv/bin/python" "$APP_DIR/manage.py" migrate --noinput
 "$APP_DIR/venv/bin/python" "$APP_DIR/manage.py" collectstatic --noinput
 
+log "Setting web asset permissions"
+for asset_dir in "$APP_DIR/frontend/dist" "$APP_DIR/staticfiles"; do
+  if [[ -d "$asset_dir" ]]; then
+    chgrp -R www-data "$asset_dir"
+    find "$asset_dir" -type d -exec chmod 0750 {} +
+    find "$asset_dir" -type f -exec chmod 0640 {} +
+  fi
+done
+
 log "Restarting $SERVICE_NAME"
 sudo -n systemctl restart "$SERVICE_NAME"
 systemctl is-active --quiet "$SERVICE_NAME"
