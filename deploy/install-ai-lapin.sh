@@ -3,6 +3,8 @@ set -Eeuo pipefail
 
 APP_DIR="${APP_DIR:-/srv/AI_Lapin}"
 SERVICE_FILE="/etc/systemd/system/ai-lapin.service"
+PROFI_MONITOR_SERVICE_FILE="/etc/systemd/system/ai-lapin-profi-monitor.service"
+FREELANCE_MONITOR_SERVICE_FILE="/etc/systemd/system/ai-lapin-freelance-monitor.service"
 NGINX_SITE="${NGINX_SITE:-/etc/nginx/sites-available/cloud-site}"
 NGINX_SNIPPET="/etc/nginx/snippets/ai-lapin.conf"
 LEGACY_ENV_PATH="${LEGACY_ENV_PATH:-}"
@@ -165,6 +167,8 @@ fi
 "$APP_DIR/venv/bin/python" "$APP_DIR/manage.py" collectstatic --noinput
 
 cp "$APP_DIR/deploy/ai-lapin.service" "$SERVICE_FILE"
+cp "$APP_DIR/deploy/ai-lapin-profi-monitor.service" "$PROFI_MONITOR_SERVICE_FILE"
+cp "$APP_DIR/deploy/ai-lapin-freelance-monitor.service" "$FREELANCE_MONITOR_SERVICE_FILE"
 cp "$APP_DIR/deploy/ai-lapin-deploy.service" /etc/systemd/system/ai-lapin-deploy.service
 cp "$APP_DIR/deploy/ai-lapin-deploy.timer" /etc/systemd/system/ai-lapin-deploy.timer
 cp "$APP_DIR/deploy/ai-lapin-deploy.sudoers" /etc/sudoers.d/ai-lapin-deploy
@@ -227,6 +231,8 @@ chmod 640 "$APP_DIR/.env"
 systemctl daemon-reload
 systemctl enable --now ai-lapin.service
 systemctl enable --now ai-lapin-deploy.timer
+systemctl enable --now ai-lapin-profi-monitor.service
+systemctl enable --now ai-lapin-freelance-monitor.service
 nginx -t
 systemctl reload nginx
 
@@ -242,6 +248,21 @@ for attempt in {1..30}; do
     exit 1
   fi
   sleep 1
+done
+for monitor in profi freelance; do
+  for attempt in {1..45}; do
+    if curl --fail --silent -H 'Host: liderscan.ru' \
+      -H 'X-Forwarded-Proto: https' \
+      --unix-socket "/run/ai-lapin-$monitor/gunicorn.sock" \
+      http://localhost/health/ >/dev/null 2>&1; then
+      break
+    fi
+    if [[ $attempt -eq 45 ]]; then
+      echo "AI_Lapin $monitor monitor socket health check failed."
+      exit 1
+    fi
+    sleep 1
+  done
 done
 curl --fail --silent --show-error https://liderscan.ru/ai-lapin/health/ >/dev/null
 

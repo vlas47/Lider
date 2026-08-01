@@ -8,6 +8,8 @@ AI_Lapin живет отдельно от публичного лендинга.
 - Серверное приложение AI_Lapin: ветка `ai-lapin-prod`.
 - Прод-каталог на VPS: `/srv/AI_Lapin`.
 - Сервис приложения: `ai-lapin.service`.
+- Сервис Profi-радара: `ai-lapin-profi-monitor.service`.
+- Сервис Freelance-радара: `ai-lapin-freelance-monitor.service`.
 - Деплойный сервис: `ai-lapin-deploy.service`.
 - Автопроверка GitHub: `ai-lapin-deploy.timer`.
 
@@ -20,6 +22,8 @@ GitHub / ai-lapin-prod
   -> npm build
   -> Django check/migrate/collectstatic
   -> restart ai-lapin.service
+  -> restart ai-lapin-profi-monitor.service
+  -> restart ai-lapin-freelance-monitor.service
 ```
 
 ## Как разработчику вносить изменения
@@ -104,6 +108,8 @@ sudo systemctl status ai-lapin-deploy.service --no-pager -l
 
 ```bash
 sudo systemctl status ai-lapin.service --no-pager -l
+sudo systemctl status ai-lapin-profi-monitor.service --no-pager -l
+sudo systemctl status ai-lapin-freelance-monitor.service --no-pager -l
 curl -fsS https://liderscan.ru/ai-lapin/health/
 ```
 
@@ -119,6 +125,8 @@ curl -fsS https://liderscan.ru/ai-lapin/health/
 
 ```bash
 sudo journalctl -u ai-lapin.service -n 100 --no-pager
+sudo journalctl -u ai-lapin-profi-monitor.service -n 100 --no-pager
+sudo journalctl -u ai-lapin-freelance-monitor.service -n 100 --no-pager
 ```
 
 Логи деплоя:
@@ -164,6 +172,8 @@ cd /srv/AI_Lapin
 sudo systemctl stop ai-lapin-deploy.timer
 sudo -u deploy git reset --hard <commit_sha>
 sudo systemctl restart ai-lapin.service
+sudo systemctl restart ai-lapin-profi-monitor.service
+sudo systemctl restart ai-lapin-freelance-monitor.service
 curl -fsS https://liderscan.ru/ai-lapin/health/
 ```
 
@@ -188,6 +198,8 @@ sudo -u deploy git -C /srv/AI_Lapin rev-parse HEAD
 
 ```bash
 systemctl is-active ai-lapin.service
+systemctl is-active ai-lapin-profi-monitor.service
+systemctl is-active ai-lapin-freelance-monitor.service
 ```
 
 Проверить, что автодеплой активен:
@@ -195,4 +207,3 @@ systemctl is-active ai-lapin.service
 ```bash
 systemctl is-active ai-lapin-deploy.timer
 ```
-

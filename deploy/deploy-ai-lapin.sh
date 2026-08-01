@@ -74,6 +74,13 @@ log "Running Django checks"
 log "Restarting $SERVICE_NAME"
 sudo -n systemctl restart "$SERVICE_NAME"
 systemctl is-active --quiet "$SERVICE_NAME"
+for monitor_service in ai-lapin-profi-monitor.service ai-lapin-freelance-monitor.service; do
+  if systemctl cat "$monitor_service" >/dev/null 2>&1; then
+    log "Restarting $monitor_service"
+    sudo -n systemctl restart "$monitor_service"
+    systemctl is-active --quiet "$monitor_service"
+  fi
+done
 for attempt in {1..30}; do
   if curl --fail --silent -H 'Host: liderscan.ru' \
     -H 'X-Forwarded-Proto: https' \

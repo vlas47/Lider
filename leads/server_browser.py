@@ -21,6 +21,7 @@ PROFI_MOBILE_USER_AGENT = (
     "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1"
 )
 PROFI_VISIBLE_SCAN_LIMIT = 5
+MAX_SEND_RETRY_SECONDS = 600
 
 ORDER_EXTRACTOR_SCRIPT = r"""
 () => {
@@ -110,6 +111,7 @@ class PlatformServerBrowser:
         self._last_error = ""
         self._last_problem_key = ""
         self._last_problem_at = None
+        self._max_attempted_at = {}
         self._previous_visible_keys = []
         self.source_label = source_label
         self.default_url = default_url
@@ -314,6 +316,7 @@ class PlatformServerBrowser:
             existing = 0
             updated = 0
             max_sent = 0
+            max_attempted_lead_ids = set()
             emitted_lead_ids = set()
             threshold = self._monitor_score_threshold if threshold is None else int(threshold)
 
@@ -339,13 +342,36 @@ class PlatformServerBrowser:
                     emitted_lead_ids.add(lead.id)
                     leads.append(self.serialize_lead(lead))
 
-                if lead.score >= threshold and not lead.max_status:
+                if lead.score >= threshold and not lead.max_status and self._max_retry_ready(lead.id):
+                    self._record_max_attempt(lead.id)
+                    max_attempted_lead_ids.add(lead.id)
                     result = send_max_event(lead)
-                    max_sent += 1
                     lead.refresh_from_db()
+                    if lead.max_status:
+                        max_sent += 1
                     self._event(f"Интересная заявка {lead.score}/100: {lead.title}. {result}", "hot")
                 elif created_now:
                     self._event(f"Новая заявка {lead.score}/100: {lead.title}")
+
+            # A temporary MAX outage must not permanently lose a hot lead. Retry
+            # visible, unsent leads after a backoff even when the card is no
+            # longer considered new in the top five.
+            for order in visible_orders:
+                lead = self._find_existing_lead(order)
+                if (
+                    not lead
+                    or lead.id in max_attempted_lead_ids
+                    or lead.score < threshold
+                    or lead.max_status
+                    or not self._max_retry_ready(lead.id)
+                ):
+                    continue
+                self._record_max_attempt(lead.id)
+                result = send_max_event(lead)
+                lead.refresh_from_db()
+                if lead.max_status:
+                    max_sent += 1
+                self._event(f"Повторная отправка заявки {lead.score}/100: {lead.title}. {result}", "hot")
 
             summary = (
                 f"Скан: верхних заявок {len(visible_orders)}, новых в верхней пятерке {len(fresh_orders)}, "
@@ -369,14 +395,14 @@ class PlatformServerBrowser:
         finally:
             close_old_connections()
 
-    def start_monitor(self):
+    def start_monitor(self, catch_up=False):
         with self._lock:
             if self._monitor_active:
                 return self.status()
             self._monitor_active = True
             self._last_error = ""
 
-        result = self.scan(refresh=False, baseline=True)
+        result = self.scan(refresh=False, baseline=not catch_up)
         if not result.get("visible"):
             self._event("Видимых заявок для разбора пока нет.")
         thread_name = f"{self.source_label.lower()}-server-monitor".replace(".ru", "")
@@ -566,6 +592,8 @@ class PlatformServerBrowser:
 
             try:
                 self.scan(refresh=True)
+                with self._lock:
+                    self._last_error = ""
             except Exception as error:
                 with self._lock:
                     self._last_error = str(error)
@@ -574,6 +602,20 @@ class PlatformServerBrowser:
                     f"{self.source_label} Radar: ошибка скана. Открой приложение и проверь кабинет. Детали: {error}",
                     "scan_error",
                 )
+                self._recover_browser_after_scan_error()
+
+    def _recover_browser_after_scan_error(self):
+        """Recreate Chromium after a broken page/context without stopping monitoring."""
+
+        try:
+            if self._page or self._context or self._playwright:
+                self.run(self._shutdown_browser())
+            self.start()
+            self._event(f"Серверный браузер {self.source_label} восстановлен после ошибки.")
+        except Exception as error:
+            with self._lock:
+                self._last_error = str(error)
+            self._event(f"Браузер пока не восстановлен: {error}", "error")
 
     def _key(self, order):
         return self._fingerprint(order.get("text", ""))
@@ -625,6 +667,18 @@ class PlatformServerBrowser:
         result = send_max_text(message)
         self._event(f"{message} MAX: {result}", "error")
         return result
+
+    def _max_retry_ready(self, lead_id):
+        with self._lock:
+            attempted_at = self._max_attempted_at.get(lead_id)
+        return attempted_at is None or time.monotonic() - attempted_at >= MAX_SEND_RETRY_SECONDS
+
+    def _record_max_attempt(self, lead_id):
+        with self._lock:
+            self._max_attempted_at[lead_id] = time.monotonic()
+            if len(self._max_attempted_at) > 200:
+                oldest = min(self._max_attempted_at, key=self._max_attempted_at.get)
+                self._max_attempted_at.pop(oldest, None)
 
     def _find_existing_lead(self, order):
         raw_text = order.get("text", "")

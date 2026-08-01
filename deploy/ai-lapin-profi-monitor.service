@@ -1,0 +1,23 @@
+[Unit]
+Description=AI_Lapin dedicated Profi.ru monitor
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+User=deploy
+Group=www-data
+WorkingDirectory=/srv/AI_Lapin
+EnvironmentFile=/srv/AI_Lapin/.env
+Environment=AI_LAPIN_MONITOR_PLATFORM=profi
+RuntimeDirectory=ai-lapin-profi
+RuntimeDirectoryMode=0755
+ExecStart=/srv/AI_Lapin/venv/bin/gunicorn ai_lapin.wsgi:application --workers 1 --threads 4 --timeout 180 --graceful-timeout 30 --bind unix:/run/ai-lapin-profi/gunicorn.sock
+Restart=always
+RestartSec=10
+TimeoutStopSec=45
+KillMode=control-group
+MemoryHigh=280M
+MemoryMax=380M
+
+[Install]
+WantedBy=multi-user.target

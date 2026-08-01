@@ -23,11 +23,13 @@ if [[ ! -f "$SOURCE_DIR/manage.py" || ! -f "$SOURCE_DIR/deploy/install-ai-lapin.
   exit 1
 fi
 
-had_service=0
-if systemctl is-active --quiet ai-lapin.service; then
-  had_service=1
-  systemctl stop ai-lapin.service
-fi
+active_services=()
+for service in ai-lapin.service ai-lapin-profi-monitor.service ai-lapin-freelance-monitor.service; do
+  if systemctl is-active --quiet "$service"; then
+    active_services+=("$service")
+    systemctl stop "$service"
+  fi
+done
 
 old_moved=0
 rollback() {
@@ -36,7 +38,7 @@ rollback() {
     return
   fi
   echo "Activation failed; restoring the previous application directory."
-  systemctl stop ai-lapin.service 2>/dev/null || true
+  systemctl stop ai-lapin.service ai-lapin-profi-monitor.service ai-lapin-freelance-monitor.service 2>/dev/null || true
   if [[ -f "$BACKUP_DIR/.server-backup/ai_lapin.dump" ]]; then
     sudo -u postgres dropdb --if-exists ai_lapin || true
     sudo -u postgres createdb --owner=ai_lapin ai_lapin
@@ -52,6 +54,10 @@ rollback() {
   if [[ -d "$APP_DIR/.server-backup" ]]; then
     cp -a "$APP_DIR/.server-backup/ai-lapin.service" \
       /etc/systemd/system/ai-lapin.service 2>/dev/null || true
+    cp -a "$APP_DIR/.server-backup/ai-lapin-profi-monitor.service" \
+      /etc/systemd/system/ai-lapin-profi-monitor.service 2>/dev/null || true
+    cp -a "$APP_DIR/.server-backup/ai-lapin-freelance-monitor.service" \
+      /etc/systemd/system/ai-lapin-freelance-monitor.service 2>/dev/null || true
     cp -a "$APP_DIR/.server-backup/nginx-cloud-site" \
       /etc/nginx/sites-available/cloud-site 2>/dev/null || true
     if [[ -f "$APP_DIR/.server-backup/nginx-ai-lapin-snippet" ]]; then
@@ -61,9 +67,9 @@ rollback() {
     systemctl daemon-reload || true
     nginx -t && systemctl reload nginx || true
   fi
-  if [[ $had_service -eq 1 ]]; then
-    systemctl start ai-lapin.service || true
-  fi
+  for service in "${active_services[@]}"; do
+    systemctl start "$service" || true
+  done
   exit "$status"
 }
 trap rollback ERR
@@ -82,6 +88,10 @@ if sudo -u postgres psql -Atc \
 fi
 cp -a /etc/systemd/system/ai-lapin.service \
   "$BACKUP_DIR/.server-backup/ai-lapin.service" 2>/dev/null || true
+cp -a /etc/systemd/system/ai-lapin-profi-monitor.service \
+  "$BACKUP_DIR/.server-backup/ai-lapin-profi-monitor.service" 2>/dev/null || true
+cp -a /etc/systemd/system/ai-lapin-freelance-monitor.service \
+  "$BACKUP_DIR/.server-backup/ai-lapin-freelance-monitor.service" 2>/dev/null || true
 cp -a /etc/nginx/sites-available/cloud-site \
   "$BACKUP_DIR/.server-backup/nginx-cloud-site"
 cp -a /etc/nginx/snippets/ai-lapin.conf \

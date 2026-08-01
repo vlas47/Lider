@@ -1,1 +1,1 @@
-deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart ai-lapin.service
+deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart ai-lapin.service, /usr/bin/systemctl restart ai-lapin-profi-monitor.service, /usr/bin/systemctl restart ai-lapin-freelance-monitor.service

@@ -40,10 +40,16 @@ cd C:\Python\Lider\AI_Lapin
 ```text
 https://liderscan.ru/ai-lapin/
   -> nginx
-  -> /run/ai-lapin/gunicorn.sock
-  -> Django API + собранный React frontend
+  -> /run/ai-lapin/gunicorn.sock (Django API + React frontend)
+  -> /run/ai-lapin-profi/gunicorn.sock (Profi.ru browser + monitor)
+  -> /run/ai-lapin-freelance/gunicorn.sock (Freelance.ru browser + monitor)
   -> PostgreSQL / database ai_lapin
 ```
+
+Мониторы работают в отдельных systemd-сервисах
+`ai-lapin-profi-monitor.service` и `ai-lapin-freelance-monitor.service`.
+Они автоматически запускаются после перезагрузки сервера, выполняют catch-up
+верхних заявок и не останавливаются при перезапуске основного Gunicorn.
 
 Первичная установка после копирования проекта в `/srv/AI_Lapin`:
 

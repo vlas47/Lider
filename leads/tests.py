@@ -1,7 +1,10 @@
 import sqlite3
 import tempfile
+import threading
 from contextlib import closing
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import MagicMock, patch
 
 from django.core.management import call_command
 from django.test import TestCase, override_settings
@@ -10,6 +13,7 @@ from django.urls import reverse
 from .models import Lead
 from .quick_replies import build_suggested_quick_reply
 from .scoring import build_max_message
+from .server_browser import PlatformServerBrowser
 
 
 class LeadModelTests(TestCase):
@@ -124,3 +128,39 @@ class LeadModelTests(TestCase):
         lead = Lead.objects.get()
         self.assertEqual(lead.source, Lead.SOURCE_PROFI)
         self.assertEqual(lead.score, 70)
+
+
+class MonitorRuntimeTests(TestCase):
+    def test_catch_up_monitor_scans_instead_of_seeding_a_baseline(self):
+        browser = object.__new__(PlatformServerBrowser)
+        browser._lock = threading.RLock()
+        browser._monitor_active = False
+        browser._last_error = "old"
+        browser.source_label = "Test.ru"
+        browser.scan = MagicMock(return_value={"visible": 2})
+        browser.status = MagicMock(return_value={"monitor_active": True})
+
+        with patch("leads.server_browser.threading.Thread") as thread_class:
+            result = browser.start_monitor(catch_up=True)
+
+        browser.scan.assert_called_once_with(refresh=False, baseline=False)
+        thread_class.return_value.start.assert_called_once_with()
+        self.assertTrue(result["monitor_active"])
+
+    def test_dedicated_runtime_starts_only_selected_platform(self):
+        from .monitor_runtime import start_configured_monitor
+
+        browser = MagicMock()
+        module = SimpleNamespace(server_browser=browser)
+        with (
+            patch.dict("os.environ", {"AI_LAPIN_MONITOR_PLATFORM": "profi"}),
+            patch("leads.monitor_runtime.atexit.register") as register,
+            patch("leads.monitor_runtime.importlib.import_module", return_value=module) as importer,
+        ):
+            result = start_configured_monitor()
+
+        importer.assert_called_once_with("profi.server_browser")
+        browser.start.assert_called_once_with()
+        browser.start_monitor.assert_called_once_with(catch_up=True)
+        register.assert_called_once()
+        self.assertIs(result, browser)
