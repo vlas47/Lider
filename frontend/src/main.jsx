@@ -12,6 +12,7 @@ const fallbackConfig = {
     portfolioNozbart: "/static/img/portfolio-nozbart-russia.png",
     portfolioAshtanga: "/static/img/portfolio-ashtanga-yoga.jpg",
     portfolioSoyz: "/static/img/portfolio-soyz-zastroi.jpg",
+    portfolioInzhenerik: "/static/img/portfolio-inzhenerik.png",
   },
   urls: {
     contact: "#contact",
@@ -134,6 +135,14 @@ const projects = [
     url: "https://ashtanga-yoga.guru/",
     domain: "ashtanga-yoga.guru",
     image: "portfolioAshtanga",
+  },
+  {
+    title: "Инженерик-WEB",
+    type: "Лендинг",
+    text: "Лендинг студии веб-разработки с услугами, портфолио, тарифами и формой заявки.",
+    url: "https://liderscan.ru/demo/inzhenerik/#top",
+    domain: "liderscan.ru/demo/inzhenerik",
+    image: "portfolioInzhenerik",
   },
 ];
 
