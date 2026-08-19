@@ -581,6 +581,148 @@
   background: rgba(108, 183, 255, 0.13);
 }
 
+.ls-license-card {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.28fr);
+  gap: clamp(1.6rem, 4vw, 4.2rem);
+  align-items: center;
+  padding: clamp(1.2rem, 3vw, 2.4rem);
+  border: 1px solid var(--ls-line);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(53, 242, 154, 0.11), transparent 34%),
+    linear-gradient(135deg, rgba(101, 199, 255, 0.08), rgba(255, 255, 255, 0.035));
+}
+
+.ls-license-document {
+  position: relative;
+  width: min(100%, 390px);
+  justify-self: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 10px;
+  background: #eff8f2;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+  text-decoration: none;
+}
+
+.ls-license-document img {
+  width: 100%;
+  height: auto;
+  display: block;
+  aspect-ratio: 712 / 1007;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+
+.ls-license-document::after {
+  position: absolute;
+  inset: auto 0 0;
+  height: 26%;
+  content: "";
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(2, 7, 21, 0.78));
+}
+
+.ls-license-document span {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 46px;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(5, 0, 16, 0.76);
+  backdrop-filter: blur(12px);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.ls-license-document:hover img {
+  transform: scale(1.012);
+}
+
+.ls-license-content {
+  display: grid;
+  align-content: center;
+  gap: 1.15rem;
+}
+
+.ls-license-badge {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.62rem 0.82rem;
+  border: 1px solid rgba(53, 242, 154, 0.28);
+  border-radius: 999px;
+  color: #baffda;
+  background: rgba(53, 242, 154, 0.08);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.ls-license-content h3 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2.2rem, 4vw, 4rem);
+  line-height: 1;
+}
+
+.ls-license-content > p {
+  max-width: 690px;
+  margin: 0;
+  color: var(--ls-muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.ls-license-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.ls-license-meta div {
+  padding: 0.92rem 1rem;
+  border: 1px solid var(--ls-line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.ls-license-meta dt,
+.ls-license-meta dd {
+  margin: 0;
+}
+
+.ls-license-meta dt {
+  margin-bottom: 0.34rem;
+  color: var(--ls-blue);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.ls-license-meta dd {
+  color: #fff;
+  font-size: 0.94rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.ls-license-content .ls-license-note {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.84rem;
+}
+
 .ls-contact {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.55fr);
@@ -747,6 +889,15 @@
   .ls-grid-cards,
   .ls-grid-cards-three {
     grid-template-columns: 1fr;
+  }
+
+  .ls-license-card,
+  .ls-license-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .ls-license-document {
+    width: min(100%, 440px);
   }
 
   .ls-projects {
