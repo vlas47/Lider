@@ -13,6 +13,7 @@ class PublicSiteTests(SimpleTestCase):
         self.assertContains(response, '<link rel="canonical" href="https://liderscan.ru/">')
         self.assertContains(response, '<meta property="og:title"')
         self.assertContains(response, 'application/ld+json')
+        self.assertContains(response, "/static/img/license-fsb-2019.png")
 
     def test_industrial_placeholder_renders(self):
         response = self.client.get(reverse("pages:industrial-digitization"))

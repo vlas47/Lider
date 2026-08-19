@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Archive, ArrowRight, ExternalLink, LogIn, Phone } from "lucide-react";
+import { Archive, ArrowRight, ExternalLink, LogIn, Phone, ShieldCheck } from "lucide-react";
 import "./styles.css";
 
 const fallbackConfig = {
@@ -13,6 +13,7 @@ const fallbackConfig = {
     portfolioAshtanga: "/static/img/portfolio-ashtanga-yoga.jpg",
     portfolioSoyz: "/static/img/portfolio-soyz-zastroi.jpg",
     portfolioInzhenerik: "/static/img/portfolio-inzhenerik.png",
+    licenseFsb: "/static/img/license-fsb-2019.png",
   },
   urls: {
     contact: "#contact",
@@ -767,6 +768,72 @@ function Services() {
   );
 }
 
+function License({ image }) {
+  return (
+    <section id="license" className="ls-section ls-shell">
+      <SectionTitle
+        kicker="Лицензия и ответственность"
+        title="Компетенции подтверждены официальным документом"
+        text="Лицензия на работы и услуги, связанные с шифровальными (криптографическими) средствами и защищёнными информационными системами."
+      />
+      <div className="ls-license-card ls-reveal">
+        <a
+          className="ls-license-document"
+          href={image}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Открыть полный скан лицензии ЛСЗ № 0015592"
+        >
+          <img
+            src={image}
+            alt="Скан лицензии ЛСЗ № 0015592"
+            loading="lazy"
+            decoding="async"
+          />
+          <span>
+            Открыть полный скан
+            <ExternalLink size={16} aria-hidden="true" />
+          </span>
+        </a>
+
+        <div className="ls-license-content">
+          <div className="ls-license-badge">
+            <ShieldCheck size={24} aria-hidden="true" />
+            <span>Лицензия УФСБ России по Новосибирской области</span>
+          </div>
+          <h3>ЛСЗ № 0015592</h3>
+          <p>
+            Документ выдан ООО УК «ЛИДЕР» на выполнение лицензируемых работ в области
+            криптографической защиты информации и обслуживания защищённых информационных
+            и телекоммуникационных систем.
+          </p>
+          <dl className="ls-license-meta">
+            <div>
+              <dt>Регистрационный номер</dt>
+              <dd>0342Н</dd>
+            </div>
+            <div>
+              <dt>Дата выдачи</dt>
+              <dd>8 июля 2019 года</dd>
+            </div>
+            <div>
+              <dt>Организация</dt>
+              <dd>ООО УК «ЛИДЕР»</dd>
+            </div>
+            <div>
+              <dt>Область работ</dt>
+              <dd>Криптографическая защита информации</dd>
+            </div>
+          </dl>
+          <p className="ls-license-note">
+            Полный перечень разрешённых работ и реквизиты указаны в скане документа.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Stack() {
   return (
     <section className="ls-section ls-shell">
@@ -831,6 +898,7 @@ function HomeApp() {
       <Projects images={config.images} />
       <Testimonials />
       <Services />
+      <License image={config.images.licenseFsb} />
       <Process />
       <Stack />
       <Contact config={config} />
