@@ -34,7 +34,7 @@ class HomeView(TemplateView):
                 "contact": "#contact",
                 "phone": "tel:+79180916494",
                 "industrial": reverse("pages:industrial-digitization"),
-                "cabinet": reverse("pages:service-login"),
+                "cabinet": "/ai-lapin/",
             },
             "cabinetLabel": "Вход в кабинет",
         }

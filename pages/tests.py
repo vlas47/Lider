@@ -21,12 +21,15 @@ class PublicSiteTests(SimpleTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Промышленная оцифровка")
 
-    def test_service_login_placeholder_renders(self):
+    def test_service_login_redirects_to_ai_lapin(self):
         response = self.client.get(reverse("pages:service-login"))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Вход в кабинет")
-        self.assertContains(response, '<meta name="robots" content="noindex,nofollow">')
+        self.assertRedirects(
+            response,
+            "/ai-lapin/",
+            status_code=301,
+            fetch_redirect_response=False,
+        )
 
     def test_robots_txt_renders(self):
         response = self.client.get(reverse("pages:robots"))
