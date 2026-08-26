@@ -41,11 +41,7 @@ urlpatterns = [
     ),
     path(
         "service/login/",
-        PlaceholderView.as_view(
-            title="Вход в кабинет",
-            text="Личный кабинет будет собран отдельным модулем в новом интерфейсе Lapin Systems.",
-            robots="noindex,nofollow",
-        ),
+        RedirectView.as_view(url="/ai-lapin/", permanent=True),
         name="service-login",
     ),
 ]

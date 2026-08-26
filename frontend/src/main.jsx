@@ -19,7 +19,7 @@ const fallbackConfig = {
     contact: "#contact",
     phone: "tel:+79180916494",
     industrial: "/industrial-digitization/",
-    cabinet: "/service/login/",
+    cabinet: "/ai-lapin/",
   },
   cabinetLabel: "Вход в кабинет",
 };
