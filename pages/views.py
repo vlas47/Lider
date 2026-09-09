@@ -1,13 +1,15 @@
 from datetime import date
+import time
 from xml.sax.saxutils import escape
 
 from django.conf import settings
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.templatetags.static import static
 from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
 
+from .forms import WebsiteRequestForm
 from .site_services import SITE_SERVICES, SITE_SERVICES_BY_SLUG
 
 
@@ -76,11 +78,15 @@ class SitesView(TemplateView):
 class SiteServiceView(TemplateView):
     template_name = "pages/site_service.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        service = SITE_SERVICES_BY_SLUG.get(kwargs["slug"])
+    def get_service(self):
+        service = SITE_SERVICES_BY_SLUG.get(self.kwargs["slug"])
         if service is None:
             raise Http404("Неизвестный вид сайта")
+        return service
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        service = self.get_service()
 
         related = [item for item in SITE_SERVICES if item["slug"] != service["slug"]][:3]
         context.update(
@@ -90,11 +96,32 @@ class SiteServiceView(TemplateView):
                     "image_url": static(service["image"]),
                 },
                 "related_services": with_service_urls(related),
+                "request_form": kwargs.get("request_form") or WebsiteRequestForm(),
+                "request_sent": self.request.session.pop("website_request_sent", False),
                 "seo_title": f"{service['title']} на заказ · Lapin Systems",
                 "seo_description": service["summary"],
             }
         )
         return context
+
+    def post(self, request, *args, **kwargs):
+        service = self.get_service()
+        form = WebsiteRequestForm(request.POST, request.FILES)
+        last_sent = request.session.get("website_request_time", 0)
+        if time.time() - last_sent < 30:
+            form.add_error(None, "Заявка уже получена. Повторную можно отправить через 30 секунд.")
+        if form.is_valid():
+            website_request = form.save(commit=False)
+            website_request.service_slug = service["slug"]
+            website_request.source_url = request.path
+            website_request.save()
+            request.session["website_request_sent"] = True
+            request.session["website_request_time"] = time.time()
+            return HttpResponseRedirect(
+                reverse("pages:site-service", kwargs={"slug": service["slug"]})
+                + "?sent=1#request"
+            )
+        return self.render_to_response(self.get_context_data(request_form=form))
 
 
 class PlaceholderView(TemplateView):

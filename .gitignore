@@ -17,6 +17,7 @@ venv/
 # Django collected static files & media
 staticfiles/
 media/
+private_uploads/
 
 # Environment / tooling
 .env

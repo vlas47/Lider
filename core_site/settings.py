@@ -82,7 +82,7 @@ if os.getenv("USE_SQLITE_FALLBACK") == "1":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": ":memory:",
+            "NAME": os.getenv("SQLITE_DATABASE_PATH", ":memory:"),
         }
     }
 
