@@ -101,13 +101,6 @@
             const sitesMenu = document.querySelector(".site-nav-sites");
             if (!sitesMenu) return;
 
-            const desktopMenu = window.matchMedia("(min-width: 901px)");
-            sitesMenu.addEventListener("mouseenter", () => {
-                if (desktopMenu.matches) sitesMenu.open = true;
-            });
-            sitesMenu.addEventListener("mouseleave", () => {
-                if (desktopMenu.matches) sitesMenu.open = false;
-            });
             document.addEventListener("click", (event) => {
                 if (sitesMenu.open && !sitesMenu.contains(event.target)) sitesMenu.open = false;
             });
