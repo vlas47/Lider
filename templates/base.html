@@ -67,10 +67,22 @@
                 </span>
             </a>
             <nav aria-label="Основная навигация">
-                <a href="#about">Как работаем</a>
-                <a href="#cases">Проекты</a>
-                <a href="#services">Услуги</a>
-                <a href="#contact">Контакты</a>
+                <details class="site-nav-sites">
+                    <summary>Сайты</summary>
+                    <div class="site-nav-dropdown">
+                        <a class="site-nav-all" href="{% url 'pages:sites' %}">Все варианты сайтов</a>
+                        {% for service in site_services_nav %}
+                            <a href="{% url 'pages:site-service' slug=service.slug %}">
+                                <strong>{{ service.title }}</strong>
+                                <span>{{ service.summary }}</span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </details>
+                <a href="{% url 'pages:home' %}#about">Как работаем</a>
+                <a href="{% url 'pages:home' %}#cases">Проекты</a>
+                <a href="{% url 'pages:home' %}#services">Услуги</a>
+                <a href="{% url 'pages:home' %}#contact">Контакты</a>
                 <a href="{% url 'pages:industrial-digitization' %}">Оцифровка</a>
             </nav>
         </div>
@@ -84,6 +96,26 @@
             <a href="/ai-lapin/">Вход в кабинет</a>
         </div>
     </footer>
+    <script>
+        (() => {
+            const sitesMenu = document.querySelector(".site-nav-sites");
+            if (!sitesMenu) return;
+
+            const desktopMenu = window.matchMedia("(min-width: 901px)");
+            sitesMenu.addEventListener("mouseenter", () => {
+                if (desktopMenu.matches) sitesMenu.open = true;
+            });
+            sitesMenu.addEventListener("mouseleave", () => {
+                if (desktopMenu.matches) sitesMenu.open = false;
+            });
+            document.addEventListener("click", (event) => {
+                if (sitesMenu.open && !sitesMenu.contains(event.target)) sitesMenu.open = false;
+            });
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") sitesMenu.open = false;
+            });
+        })();
+    </script>
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>

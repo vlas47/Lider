@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Archive, ArrowRight, ExternalLink, LogIn, Phone, ShieldCheck } from "lucide-react";
+import { Archive, ArrowRight, ExternalLink, Globe2, LogIn, Phone, ShieldCheck } from "lucide-react";
 import "./styles.css";
 
 const fallbackConfig = {
@@ -18,6 +18,7 @@ const fallbackConfig = {
   urls: {
     contact: "#contact",
     phone: "tel:+79180916494",
+    sites: "/sites/",
     industrial: "/industrial-digitization/",
     cabinet: "/ai-lapin/",
   },
@@ -465,7 +466,11 @@ function Hero({ config }) {
             Соединяем опыт в бизнес-процессах с новым взглядом на современные технологии.
           </p>
           <div className="ls-actions">
-            <a className="ls-button ls-button-primary" href={config.urls.contact}>
+            <a className="ls-button ls-button-primary" href={config.urls.sites}>
+              <Globe2 size={18} aria-hidden="true" />
+              Выбрать сайт
+            </a>
+            <a className="ls-button" href={config.urls.contact}>
               <ArrowRight size={18} aria-hidden="true" />
               Обсудить задачу
             </a>
@@ -482,6 +487,7 @@ function Hero({ config }) {
       </div>
 
       <div className="ls-shell ls-tags" aria-label="Направления">
+        <span>Сайты</span>
         <span>CRM</span>
         <span>WMS</span>
         <span>Фулфилмент</span>

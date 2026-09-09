@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.templatetags.static import static
 
+from .site_services import SITE_SERVICES
+
 
 DEFAULT_SEO_TITLE = "Lapin Systems · Автоматизируем ежедневные процессы бизнеса"
 DEFAULT_SEO_DESCRIPTION = (
@@ -21,4 +23,5 @@ def site_meta(request):
         "canonical_url": canonical_url,
         "site_base_url": base_url,
         "og_image_url": f"{base_url}{static('img/lapin-systems-logo.png')}",
+        "site_services_nav": SITE_SERVICES,
     }

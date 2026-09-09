@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+{% block body_class %}site-catalog-page{% endblock %}
+
+{% block content %}
+    <section class="sites-hero sites-shell">
+        <div class="sites-breadcrumbs">
+            <a href="{% url 'pages:home' %}">Lapin Systems</a>
+            <span>/</span>
+            <span>Сайты</span>
+        </div>
+        <div class="sites-hero-grid">
+            <div>
+                <p class="sites-kicker">Разработка сайтов</p>
+                <h1>Сайты, которые работают на задачу бизнеса</h1>
+            </div>
+            <div class="sites-hero-copy">
+                <p>От рекламного лендинга до интернет-магазина и сложного веб-сервиса. Проектируем структуру, делаем дизайн, подключаем заявки и интеграции, публикуем и развиваем после запуска.</p>
+                <div class="sites-actions">
+                    <a class="sites-button sites-button-primary" href="#site-types">Выбрать формат</a>
+                    <a class="sites-button" href="{% url 'pages:home' %}#contact">Обсудить задачу</a>
+                </div>
+            </div>
+        </div>
+        <div class="sites-proof" aria-label="Преимущества">
+            <span>Адаптивный дизайн</span>
+            <span>Заявки и аналитика</span>
+            <span>SEO-основа</span>
+            <span>Интеграции</span>
+            <span>Поддержка</span>
+        </div>
+    </section>
+
+    <section id="site-types" class="sites-section sites-shell">
+        <div class="sites-section-title">
+            <p class="sites-kicker">Форматы</p>
+            <div>
+                <h2>Выберите подходящий тип сайта</h2>
+                <p>Состав работ и технология определяются после короткого разбора задачи. Если формат пока неясен, поможем выбрать без переплаты за лишние функции.</p>
+            </div>
+        </div>
+        <div class="sites-grid">
+            {% for service in site_services %}
+                <article class="sites-card">
+                    <a class="sites-card-image" href="{{ service.url }}" aria-label="{{ service.title }}">
+                        <img src="{{ service.image_url }}" alt="Пример проекта: {{ service.title }}" loading="lazy">
+                    </a>
+                    <div class="sites-card-body">
+                        <span class="sites-card-number">0{{ forloop.counter }}</span>
+                        <h3><a href="{{ service.url }}">{{ service.title }}</a></h3>
+                        <p>{{ service.summary }}</p>
+                        <small>{{ service.best_for }}</small>
+                        <a class="sites-card-link" href="{{ service.url }}">Подробнее <span aria-hidden="true">→</span></a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="sites-section sites-shell">
+        <div class="sites-section-title">
+            <p class="sites-kicker">Как работаем</p>
+            <div>
+                <h2>От идеи до работающего сайта</h2>
+                <p>Фиксируем результат каждого этапа, показываем промежуточные версии и запускаем только после проверки ключевых сценариев.</p>
+            </div>
+        </div>
+        <div class="sites-steps">
+            <article><span>01</span><h3>Разбираем задачу</h3><p>Целевая аудитория, предложение, источники трафика, содержание и нужные интеграции.</p></article>
+            <article><span>02</span><h3>Проектируем и собираем</h3><p>Структура, прототип, дизайн, программирование и наполнение согласованным материалом.</p></article>
+            <article><span>03</span><h3>Проверяем и запускаем</h3><p>Телефоны, формы, скорость, аналитика, индексация, публикация и контроль после старта.</p></article>
+        </div>
+    </section>
+
+    <section class="sites-cta sites-shell">
+        <div>
+            <p class="sites-kicker">Первый шаг</p>
+            <h2>Расскажите, что должен делать сайт</h2>
+            <p>Предложим формат, состав первой версии и понятный план запуска.</p>
+        </div>
+        <div class="sites-actions">
+            <a class="sites-button sites-button-primary" href="tel:+79180916494">Позвонить</a>
+            <a class="sites-button" href="{% url 'pages:home' %}#contact">Контакты</a>
+        </div>
+    </section>
+{% endblock %}

@@ -14,6 +14,43 @@ class PublicSiteTests(SimpleTestCase):
         self.assertContains(response, '<meta property="og:title"')
         self.assertContains(response, 'application/ld+json')
         self.assertContains(response, "/static/img/license-fsb-2019.png")
+        self.assertContains(response, "Сайты")
+        self.assertContains(response, reverse("pages:sites"))
+        self.assertContains(response, '"sites": "/sites/"')
+
+    def test_sites_catalog_renders_all_site_types(self):
+        response = self.client.get(reverse("pages:sites"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "pages/sites.html")
+        self.assertContains(response, "Сайты, которые работают на задачу бизнеса")
+        self.assertContains(response, "Лендинг")
+        self.assertContains(response, "Корпоративный сайт")
+        self.assertContains(response, "Сайт-каталог")
+        self.assertContains(response, "Поддержка сайта")
+        self.assertContains(response, "Сайт-визитка")
+        self.assertContains(response, "Интернет-магазин")
+        self.assertContains(response, "Готовые сайты для бизнеса")
+        self.assertContains(response, "Веб-сервисы и интернет-проекты")
+
+    def test_site_service_page_renders(self):
+        response = self.client.get(
+            reverse("pages:site-service", kwargs={"slug": "online-store"})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "pages/site_service.html")
+        self.assertContains(response, "Интернет-магазин")
+        self.assertContains(response, "Каталог, корзина, оформление заказов")
+        self.assertContains(response, "Что входит в работу")
+        self.assertContains(response, "Обсудить проект")
+
+    def test_unknown_site_service_returns_404(self):
+        response = self.client.get(
+            reverse("pages:site-service", kwargs={"slug": "unknown-site"})
+        )
+
+        self.assertEqual(response.status_code, 404)
 
     def test_industrial_placeholder_renders(self):
         response = self.client.get(reverse("pages:industrial-digitization"))
@@ -45,6 +82,8 @@ class PublicSiteTests(SimpleTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/xml; charset=utf-8")
         self.assertContains(response, "<loc>https://liderscan.ru/</loc>")
+        self.assertContains(response, "<loc>https://liderscan.ru/sites/</loc>")
+        self.assertContains(response, "<loc>https://liderscan.ru/sites/online-store/</loc>")
         self.assertContains(response, "<loc>https://liderscan.ru/industrial-digitization/</loc>")
 
     def test_favicon_redirects_to_static_icon(self):

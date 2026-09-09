@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+{% block body_class %}site-catalog-page site-service-page{% endblock %}
+
+{% block content %}
+    <section class="site-service-hero sites-shell">
+        <div class="sites-breadcrumbs">
+            <a href="{% url 'pages:home' %}">Lapin Systems</a>
+            <span>/</span>
+            <a href="{% url 'pages:sites' %}">Сайты</a>
+            <span>/</span>
+            <span>{{ site_service.title }}</span>
+        </div>
+        <div class="site-service-hero-grid">
+            <div class="site-service-copy">
+                <p class="sites-kicker">Разработка сайтов</p>
+                <h1>{{ site_service.title }}</h1>
+                <p class="site-service-summary">{{ site_service.summary }}</p>
+                <div class="sites-actions">
+                    <a class="sites-button sites-button-primary" href="{% url 'pages:home' %}#contact">Обсудить проект</a>
+                    <a class="sites-button" href="{% url 'pages:sites' %}">Другие форматы</a>
+                </div>
+            </div>
+            <figure class="site-service-visual">
+                <img src="{{ site_service.image_url }}" alt="Пример работы: {{ site_service.title }}">
+                <figcaption>{{ site_service.best_for }}</figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <section class="sites-section sites-shell site-service-details">
+        <div>
+            <p class="sites-kicker">По задаче</p>
+            <h2>{{ site_service.lead }}</h2>
+        </div>
+        <div class="site-service-includes">
+            <h3>Что входит в работу</h3>
+            <ul>
+                {% for item in site_service.includes %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+
+    <section class="sites-section sites-shell">
+        <div class="sites-section-title">
+            <p class="sites-kicker">Процесс</p>
+            <div>
+                <h2>Понятный запуск по этапам</h2>
+                <p>До начала фиксируем границы первой версии. Вы видите результат по ходу работы и принимаете каждый ключевой этап.</p>
+            </div>
+        </div>
+        <div class="sites-steps">
+            <article><span>01</span><h3>Структура</h3><p>Разбираем продукт, аудиторию и действие, к которому должен прийти посетитель.</p></article>
+            <article><span>02</span><h3>Реализация</h3><p>Делаем адаптивный интерфейс, функциональность, содержание и интеграции.</p></article>
+            <article><span>03</span><h3>Запуск</h3><p>Проверяем сценарии, подключаем аналитику, публикуем и остаёмся на связи.</p></article>
+        </div>
+    </section>
+
+    <section class="sites-section sites-shell">
+        <div class="sites-section-title">
+            <p class="sites-kicker">Ещё варианты</p>
+            <div><h2>Другие форматы сайтов</h2></div>
+        </div>
+        <div class="sites-related">
+            {% for service in related_services %}
+                <a href="{{ service.url }}">
+                    <span>{{ service.title }}</span>
+                    <small>{{ service.summary }}</small>
+                    <b aria-hidden="true">→</b>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="sites-cta sites-shell">
+        <div>
+            <p class="sites-kicker">Обсудить проект</p>
+            <h2>Начнём с задачи, а не с шаблона</h2>
+            <p>После короткого разговора предложим состав первой версии и порядок запуска.</p>
+        </div>
+        <div class="sites-actions">
+            <a class="sites-button sites-button-primary" href="tel:+79180916494">+7 918 091-64-94</a>
+            <a class="sites-button" href="{% url 'pages:home' %}#contact">Контакты</a>
+        </div>
+    </section>
+{% endblock %}

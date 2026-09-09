@@ -2,11 +2,13 @@ from datetime import date
 from xml.sax.saxutils import escape
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.templatetags.static import static
 from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
+
+from .site_services import SITE_SERVICES, SITE_SERVICES_BY_SLUG
 
 
 def site_url(path):
@@ -33,11 +35,65 @@ class HomeView(TemplateView):
             "urls": {
                 "contact": "#contact",
                 "phone": "tel:+79180916494",
+                "sites": reverse("pages:sites"),
                 "industrial": reverse("pages:industrial-digitization"),
                 "cabinet": "/ai-lapin/",
             },
             "cabinetLabel": "Вход в кабинет",
         }
+        return context
+
+
+def with_service_urls(services):
+    return [
+        {
+            **service,
+            "url": reverse("pages:site-service", kwargs={"slug": service["slug"]}),
+            "image_url": static(service["image"]),
+        }
+        for service in services
+    ]
+
+
+class SitesView(TemplateView):
+    template_name = "pages/sites.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                "site_services": with_service_urls(SITE_SERVICES),
+                "seo_title": "Разработка сайтов для бизнеса · Lapin Systems",
+                "seo_description": (
+                    "Лендинги, корпоративные сайты, каталоги, интернет-магазины, "
+                    "веб-сервисы и поддержка сайтов от Lapin Systems."
+                ),
+            }
+        )
+        return context
+
+
+class SiteServiceView(TemplateView):
+    template_name = "pages/site_service.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        service = SITE_SERVICES_BY_SLUG.get(kwargs["slug"])
+        if service is None:
+            raise Http404("Неизвестный вид сайта")
+
+        related = [item for item in SITE_SERVICES if item["slug"] != service["slug"]][:3]
+        context.update(
+            {
+                "site_service": {
+                    **service,
+                    "image_url": static(service["image"]),
+                },
+                "related_services": with_service_urls(related),
+                "seo_title": f"{service['title']} на заказ · Lapin Systems",
+                "seo_description": service["summary"],
+            }
+        )
         return context
 
 
@@ -98,8 +154,9 @@ class YandexSiteVerificationView(View):
 
 
 class SitemapXmlView(View):
-    pages = (
+    base_pages = (
         ("/", "weekly", "1.0"),
+        ("/sites/", "monthly", "0.9"),
         ("/industrial-digitization/", "monthly", "0.7"),
     )
 
@@ -109,7 +166,11 @@ class SitemapXmlView(View):
             '<?xml version="1.0" encoding="UTF-8"?>',
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
         ]
-        for path, changefreq, priority in self.pages:
+        service_pages = tuple(
+            (f"/sites/{service['slug']}/", "monthly", "0.8")
+            for service in SITE_SERVICES
+        )
+        for path, changefreq, priority in self.base_pages + service_pages:
             urls.extend(
                 [
                     "  <url>",

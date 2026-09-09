@@ -6,6 +6,8 @@ from .views import (
     HomeView,
     PlaceholderView,
     RobotsTxtView,
+    SiteServiceView,
+    SitesView,
     SitemapXmlView,
     YandexSiteVerificationView,
 )
@@ -31,6 +33,8 @@ urlpatterns = [
         name="favicon",
     ),
     path("", HomeView.as_view(), name="home"),
+    path("sites/", SitesView.as_view(), name="sites"),
+    path("sites/<slug:slug>/", SiteServiceView.as_view(), name="site-service"),
     path(
         "industrial-digitization/",
         PlaceholderView.as_view(
