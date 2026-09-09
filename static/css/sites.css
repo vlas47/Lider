@@ -51,6 +51,7 @@
 .web-card-ready-business-sites { grid-column: 7/13; grid-row: 3/4; background: #f0e3c3; color: #494132; }
 .web-card-web-services { grid-column: 7/13; grid-row: 4/5; background: #e1dfe9; color: #343248; }
 .web-card-ready-business-sites > img, .web-card-web-services > img { margin-left: 45%; width: 55%; object-position: center; }
+.web-card-web-services > img { object-position: 28% center; }
 .web-card-ready-business-sites .web-card-body, .web-card-web-services .web-card-body { inset: 22px auto 20px 22px; width: calc(45% - 36px); }
 .web-card-ready-business-sites h2, .web-card-web-services h2 { font-size: 22px; padding: 0; }
 .web-catalog-contact { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 28px 0 0; margin-top: 32px; border-top: 1px solid #d5dbd6; }

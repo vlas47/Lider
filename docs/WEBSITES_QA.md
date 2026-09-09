@@ -9,10 +9,17 @@ an enquiry form. The new art direction follows the owner's additional request:
 asymmetric portrait/landscape cards, warm light surfaces, people and business
 scenarios instead of cropped screenshots of existing portfolio sites.
 
-The eight images are AI-generated conceptual illustrations, not claims about
-actual customers or completed projects. Prompts and original output paths are
-in `website-images.json`. Optimized production assets are
-`static/img/services/websites/*-v2.webp` (eight files, 83–145 kB each).
+The images are AI-generated conceptual illustrations, not claims about
+actual customers or completed projects. At the owner's request, six service
+images feature the owner and/or his son using their homepage portraits as
+identity references. Eleven team scenes were produced in total, with varied
+customers and contexts. The personal-site scene uses the corrected version
+in which the owner looks at the laptop, not the customer.
+
+Prompts and original output paths are in `website-images.json` and
+`website-team-images.json`. Team production assets are
+`static/img/team-scenes/*-v3.webp` (80–115 kB each); two catalogue/product
+illustrations remain from `static/img/services/websites/*-v2.webp`.
 The optional `scripts/prepare_website_images.py` helper requires Pillow.
 
 ## Local browser checks
@@ -33,6 +40,9 @@ The optional `scripts/prepare_website_images.py` helper requires Pillow.
   database record and the real confirmation screen. No customer notifications
   or production enquiries were sent.
 - Browser error log: empty on the inspected local service page.
+- Repeated all 54 DOM states after integrating the final team photos: zero
+  detected overflow or broken loaded images. Rechecked the corrected portrait
+  in the real service hero and verified the library PNG matches its source hash.
 
 ## Automated and deployment checks
 
