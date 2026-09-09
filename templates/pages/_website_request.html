@@ -1,0 +1,23 @@
+<form class="web-form" method="post" enctype="multipart/form-data" action="{{ request.path }}#request">
+    {% csrf_token %}
+    {{ request_form.website }}
+    {% if request_sent %}
+    <div class="web-form-success" role="status">
+        <span aria-hidden="true">✓</span><h3>Спасибо, заявка принята</h3>
+        <p>Мы получили описание задачи и ваши контакты. Свяжемся с вами, чтобы уточнить детали.</p>
+        <a href="{% url 'pages:sites' %}">Вернуться в каталог →</a>
+    </div>
+    {% else %}
+    {% if request_form.errors %}<div class="web-form-errors" role="alert">Проверьте отмеченные поля.{{ request_form.non_field_errors }}{{ request_form.website.errors }}</div>{% endif %}
+    <div class="web-form-grid">
+        <label for="id_name">Имя{{ request_form.name }}{{ request_form.name.errors }}</label>
+        <label for="id_phone">Телефон{{ request_form.phone }}{{ request_form.phone.errors }}</label>
+        <label class="web-form-wide" for="id_email">Почта <small>необязательно</small>{{ request_form.email }}{{ request_form.email.errors }}</label>
+        <label class="web-form-wide" for="id_comment">О задаче{{ request_form.comment }}{{ request_form.comment.errors }}</label>
+        <label class="web-form-wide web-upload" for="id_brief">Макет или техническое задание <small>PDF, изображения, DOCX или ZIP до 10 МБ</small>{{ request_form.brief }}{{ request_form.brief.errors }}</label>
+    </div>
+    <label class="web-consent">{{ request_form.consent }}<span>Согласен на обработку имени, телефона, почты и описания задачи для ответа на мою заявку.</span></label>
+    {{ request_form.consent.errors }}
+    <button class="web-button" type="submit">Отправить заявку <span aria-hidden="true">→</span></button>
+    {% endif %}
+</form>

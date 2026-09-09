@@ -1,0 +1,72 @@
+{
+  "generator": "Built-in image_gen",
+  "purpose": "Concept illustrations, not portfolio case studies",
+  "prompts": [
+    [
+      "landing",
+      "Wide landscape 3:2. An ambitious small design studio owner and a web designer sit side by side at a warm oak desk discussing a striking single-page website on a large monitor. Website shows a clean architectural product photograph, strong hero composition and one discreet call-to-action button, no legible wording. Side/back three-quarter view, authentic relaxed concentration. Warm sand, muted terracotta, natural late afternoon light."
+    ],
+    [
+      "corporate-site",
+      "Portrait 2:3. Three colleagues in a well-run medium sized company discussing a project in a bright contemporary office. A woman standing confidently and two colleagues seated around a small table with an open laptop showing a sophisticated corporate website. Natural business-casual clothing, indoor plants, glass, daylight, warm cream and deep green. Human faces and teamwork, credible successful everyday company."
+    ],
+    [
+      "catalog-site",
+      "Landscape 3:2. Premium studio product photograph of a desktop screen displaying a beautifully structured furniture and lighting product catalog, beside physical design samples and a sculptural warm-white table lamp. No people. Generous composition, pale sage green wall, natural oak, indirect sunlight, elegant real objects, clear organized grid on screen, no readable text."
+    ],
+    [
+      "site-support",
+      "Landscape 3:2. Candid close view of two experienced web specialists at a workstation, discussing a screen showing a website and code editor. Realistic office with soft cool daylight and warm desk lighting, denim blue and neutral stone colors, competent calm expressions, shot from side at eye level. Not a call center, no headsets, no glowing futuristic effects."
+    ],
+    [
+      "business-card-site",
+      "Portrait 2:3. Independent female interior designer in her welcoming small studio, reviewing her personal website on a laptop at a desk with a few material samples. Site shows her portrait, interiors portfolio and simple contact area, no legible wording. Natural authentic human moment, warm peach and ivory, daylight, a small plant, atmosphere of care and professionalism."
+    ],
+    [
+      "online-store",
+      "Wide landscape 3:2. Owner of a boutique homewares brand and colleague preparing a beautiful ceramic lamp and boxed customer order at their bright studio desk. Laptop clearly visible displays an elegant online shop with product photographs and shopping cart, no readable text. Natural candid teamwork, olive green, warm ivory, coral accents, sense of a real growing company selling its own products, not stock handshakes."
+    ],
+    [
+      "ready-business-sites",
+      "Landscape 3:2. Carefully styled overhead photograph of a tablet and laptop with different beautiful small-business website designs, mood-board papers, a color palette, warm sunlight and green leaves at edge. Amber yellow, off white, slate blue. Clear physical devices, coherent website thumbnails, no readable text, no hands, distinctive graphic editorial composition."
+    ],
+    [
+      "web-services",
+      "Wide landscape 3:2. Small product team of three people collaboratively planning a web application in a bright creative workplace, realistic paper interface layouts on wall and laptop with a clean dashboard on table. Natural candid gestures, confident friendly expertise, no inflated financial graphs. Pale lavender accents, soft warm white, natural daylight. Slightly elevated three-quarter view with atmosphere and human connection."
+    ]
+  ],
+  "images": [
+    {
+      "slug": "landing",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a0837d-5cbb-76a3-87cd-52fe56ee47a8\\exec-dc656ab1-17a4-4fc2-b654-d2beab7eceb3.png"
+    },
+    {
+      "slug": "corporate-site",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a0837d-5cbb-76a3-87cd-52fe56ee47a8\\exec-63101e6b-435a-42ba-873e-4c1e8f6a96e2.png"
+    },
+    {
+      "slug": "catalog-site",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a0837d-5cbb-76a3-87cd-52fe56ee47a8\\exec-c3965b41-f7fb-4422-a1db-3b9e036bd297.png"
+    },
+    {
+      "slug": "site-support",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a0837d-5cbb-76a3-87cd-52fe56ee47a8\\exec-bd422f52-7bac-48f2-886e-4792208507a2.png"
+    },
+    {
+      "slug": "business-card-site",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a0837d-5cbb-76a3-87cd-52fe56ee47a8\\exec-8cacf43f-877c-4ed3-9a17-d5e25ad66dfd.png"
+    },
+    {
+      "slug": "online-store",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a0837d-5cbb-76a3-87cd-52fe56ee47a8\\exec-8870d28b-8e18-4a8d-b447-d1ae40586ab8.png"
+    },
+    {
+      "slug": "ready-business-sites",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a0837d-5cbb-76a3-87cd-52fe56ee47a8\\exec-6c131c22-b944-4bb3-bfff-5bf4d5c06b5b.png"
+    },
+    {
+      "slug": "web-services",
+      "source": "C:\\Users\\User\\.codex\\generated_images\\01a0837d-5cbb-76a3-87cd-52fe56ee47a8\\exec-92f74118-88e1-4f05-b663-97680a824711.png"
+    }
+  ]
+}

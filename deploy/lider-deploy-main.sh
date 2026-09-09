@@ -64,6 +64,7 @@ git_app clean -fd \
   -e staticfiles \
   -e media \
   -e industrial_jobs \
+  -e private_uploads \
   -e frontend/node_modules
 
 log "Building frontend for $target_sha"

@@ -60,6 +60,19 @@ The deploy script fetches `origin/main`, resets the checkout to it, builds the R
 
 ## Production Env
 
+### Website enquiries
+
+The eight `/sites/<format>/` forms store submissions in Django admin under
+**Заявки на сайты** (`/admin/pages/websiterequest/`). They do not send email.
+Attachments are private in `/srv/cloud_site/private_uploads/`, served only by
+the permission-checked admin download. Include this directory in backups;
+never expose it through an Nginx alias.
+
+During provisioning, install `deploy/nginx-websites.conf` as
+`/etc/nginx/snippets/liderscan-websites.conf` and include it in the liderscan.ru
+HTTPS server block. Run `nginx -t` before reload. This permits the advertised
+10 MiB attachment plus multipart overhead without raising other apps' limits.
+
 Set production values through environment variables:
 
 - `DJANGO_SECRET_KEY`

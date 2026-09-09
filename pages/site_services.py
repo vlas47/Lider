@@ -11,7 +11,7 @@ SITE_SERVICES = (
             "Формы заявок, цели аналитики и базовая SEO-настройка",
             "Публикация, проверка и поддержка после запуска",
         ),
-        "image": "img/portfolio-inzhenerik.png",
+        "image": "img/services/websites/landing-v2.webp",
     },
     {
         "slug": "corporate-site",
@@ -25,7 +25,7 @@ SITE_SERVICES = (
             "Управляемые страницы, услуги, кейсы и новости",
             "Аналитика, SEO-основа и интеграция с CRM",
         ),
-        "image": "img/portfolio-soyz-zastroi.jpg",
+        "image": "img/services/websites/corporate-site-v2.webp",
     },
     {
         "slug": "catalog-site",
@@ -39,7 +39,7 @@ SITE_SERVICES = (
             "Запрос цены, консультации или коммерческого предложения",
             "Импорт данных и удобное управление ассортиментом",
         ),
-        "image": "img/portfolio-nozbart-russia.png",
+        "image": "img/services/websites/catalog-site-v2.webp",
     },
     {
         "slug": "site-support",
@@ -53,7 +53,7 @@ SITE_SERVICES = (
             "Новые блоки, страницы и интеграции",
             "Контроль скорости, доступности и форм заявок",
         ),
-        "image": "img/portfolio-fullbox.jpg",
+        "image": "img/services/websites/site-support-v2.webp",
     },
     {
         "slug": "business-card-site",
@@ -67,7 +67,7 @@ SITE_SERVICES = (
             "Адаптация под мобильные устройства",
             "Домен, публикация и базовая аналитика",
         ),
-        "image": "img/portfolio-ashtanga-yoga.jpg",
+        "image": "img/services/websites/business-card-site-v2.webp",
     },
     {
         "slug": "online-store",
@@ -81,7 +81,7 @@ SITE_SERVICES = (
             "Личный кабинет и история заказов",
             "Интеграции с 1С, CRM, складом и маркетплейсами",
         ),
-        "image": "img/portfolio-domkapsul.jpg",
+        "image": "img/services/websites/online-store-v2.webp",
     },
     {
         "slug": "ready-business-sites",
@@ -95,7 +95,7 @@ SITE_SERVICES = (
             "Настройка форм, контактов и аналитики",
             "Публикация на вашем домене и обучение работе",
         ),
-        "image": "img/portfolio-inzhenerik.png",
+        "image": "img/services/websites/ready-business-sites-v2.webp",
     },
     {
         "slug": "web-services",
@@ -109,9 +109,25 @@ SITE_SERVICES = (
             "API, интеграции, платежи и уведомления",
             "Поэтапный запуск, мониторинг и развитие продукта",
         ),
-        "image": "img/portfolio-fullbox.jpg",
+        "image": "img/services/websites/web-services-v2.webp",
     },
 )
 
+
+SERVICE_PRESENTATION = {
+    "landing": ("Больше заявок", "Одно предложение. Понятное действие.", "Обсудим ваш лендинг", "Расскажите о продукте и рекламной кампании. Подберём структуру страницы под вашу аудиторию.", "Владелец студии и дизайнер обсуждают лендинг на большом экране"),
+    "corporate-site": ("Доверие к компании", "Компания, с которой хочется работать", "Представим вашу компанию", "Расскажите о направлениях бизнеса и о том, что важно показать вашим клиентам.", "Команда обсуждает корпоративный сайт в светлом офисе"),
+    "catalog-site": ("Ассортимент под рукой", "Помогаем найти нужный продукт", "Обсудим ваш каталог", "Расскажите об ассортименте, категориях и о том, как клиенты выбирают ваши товары.", "Экран с каталогом мебели и предметы интерьера"),
+    "site-support": ("Стабильная работа", "Сайт в надёжных руках", "Обсудим поддержку сайта", "Укажите адрес сайта и опишите, что нужно исправить или улучшить.", "Специалисты обсуждают работу сайта за компьютером"),
+    "business-card-site": ("Ваше первое впечатление", "О вас — ясно и по делу", "Создадим ваш сайт-визитку", "Расскажите о себе, своей работе и о том, как с вами связываются клиенты.", "Независимый дизайнер работает над своим сайтом в студии"),
+    "online-store": ("От интереса к покупке", "Удобно выбирать. Просто покупать.", "Запустим ваши онлайн-продажи", "Расскажите о товарах, оплате, доставке и системах, с которыми нужно связать магазин.", "Команда магазина готовит заказ рядом с ноутбуком с интернет-магазином"),
+    "ready-business-sites": ("Быстрый старт", "Хорошая основа для начала", "Подберём основу для сайта", "Расскажите об отрасли, желаемом сроке запуска и основных задачах сайта.", "Подборка дизайнов сайтов на ноутбуке, планшете и бумажных эскизах"),
+    "web-services": ("Новые возможности", "Сервис вокруг вашего процесса", "Обсудим ваш веб-сервис", "Опишите пользователей и задачи, которые должен решать будущий сервис.", "Продуктовая команда проектирует интерфейс веб-сервиса"),
+}
+
+for service in SITE_SERVICES:
+    details = SERVICE_PRESENTATION[service["slug"]]
+    service.update(zip(("purpose", "section_title", "request_title", "request_hint", "image_alt"), details))
+    service["image_width"], service["image_height"] = (800, 1200) if service["slug"] in ("corporate-site", "business-card-site") else (1200, 800)
 
 SITE_SERVICES_BY_SLUG = {service["slug"]: service for service in SITE_SERVICES}

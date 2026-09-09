@@ -51,7 +51,8 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32.png' %}?v=lapin-corners-20260708">
     <link rel="icon" type="image/png" sizes="192x192" href="{% static 'img/favicon-192.png' %}?v=lapin-corners-20260708">
     <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}?v=lapin-corners-20260708">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=lapin-corners-20260708">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=sites-20260909-2">
+    <link rel="stylesheet" href="{% static 'css/site-navigation.css' %}?v=20260909-2">
     {% block extra_head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
@@ -66,17 +67,28 @@
                     <small>веб-системы</small>
                 </span>
             </a>
-            <nav aria-label="Основная навигация">
+            <button class="site-menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">Меню <span aria-hidden="true">☰</span></button>
+            <nav id="site-navigation" aria-label="Основная навигация">
                 <details class="site-nav-sites">
                     <summary>Сайты</summary>
                     <div class="site-nav-dropdown">
-                        <a class="site-nav-all" href="{% url 'pages:sites' %}">Все варианты сайтов</a>
-                        {% for service in site_services_nav %}
-                            <a href="{% url 'pages:site-service' slug=service.slug %}">
-                                <strong>{{ service.title }}</strong>
-                                <span>{{ service.summary }}</span>
-                            </a>
-                        {% endfor %}
+                        <div class="site-nav-featured">
+                            {% for service in site_services_nav|slice:":4" %}
+                                <a href="{% url 'pages:site-service' slug=service.slug %}">
+                                    <span>
+                                        <strong>{{ service.title }}</strong>
+                                        <small>{{ service.purpose }}</small>
+                                    </span>
+                                    <img src="{% static service.image %}" alt="" loading="lazy">
+                                </a>
+                            {% endfor %}
+                        </div>
+                        <div class="site-nav-links">
+                            {% for service in site_services_nav %}
+                                <a href="{% url 'pages:site-service' slug=service.slug %}">{{ service.title }}</a>
+                            {% endfor %}
+                        </div>
+                        <a class="site-nav-all" href="{% url 'pages:sites' %}">Все варианты сайтов <span aria-hidden="true">→</span></a>
                     </div>
                 </details>
                 <a href="{% url 'pages:home' %}#about">Как работаем</a>
@@ -100,19 +112,36 @@
         (() => {
             const sitesMenu = document.querySelector(".site-nav-sites");
             if (!sitesMenu) return;
+            const header = document.querySelector(".site-header");
+            const menuToggle = header.querySelector(".site-menu-toggle");
+            header.setAttribute("data-menu-ready", "");
+            const closeNavigation = () => {
+                header.classList.remove("is-menu-open");
+                menuToggle.setAttribute("aria-expanded", "false");
+            };
+            menuToggle.addEventListener("click", () => {
+                const open = header.classList.toggle("is-menu-open");
+                menuToggle.setAttribute("aria-expanded", String(open));
+            });
+            header.querySelector("nav").addEventListener("click", (event) => {
+                if (event.target.closest("a")) {
+                    sitesMenu.open = false;
+                    closeNavigation();
+                }
+            });
 
-            const desktopMenu = window.matchMedia("(min-width: 901px)");
-            sitesMenu.addEventListener("mouseenter", () => {
-                if (desktopMenu.matches) sitesMenu.open = true;
-            });
-            sitesMenu.addEventListener("mouseleave", () => {
-                if (desktopMenu.matches) sitesMenu.open = false;
-            });
             document.addEventListener("click", (event) => {
                 if (sitesMenu.open && !sitesMenu.contains(event.target)) sitesMenu.open = false;
+                if (!header.contains(event.target)) closeNavigation();
             });
             document.addEventListener("keydown", (event) => {
-                if (event.key === "Escape") sitesMenu.open = false;
+                if (event.key === "Escape" && sitesMenu.open) {
+                    sitesMenu.open = false;
+                    sitesMenu.querySelector("summary").focus();
+                } else if (event.key === "Escape" && header.classList.contains("is-menu-open")) {
+                    closeNavigation();
+                    menuToggle.focus();
+                }
             });
         })();
     </script>

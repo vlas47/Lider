@@ -1,89 +1,54 @@
 {% extends "base.html" %}
-
-{% block title %}{{ seo_title }}{% endblock %}
-{% block body_class %}site-catalog-page site-service-page{% endblock %}
-
+{% load static %}
+{% block body_class %}web-page web-service-{{ site_service.slug }}{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/sites.css' %}?v=20260909-2">{% endblock %}
 {% block content %}
-    <section class="site-service-hero sites-shell">
-        <div class="sites-breadcrumbs">
-            <a href="{% url 'pages:home' %}">Lapin Systems</a>
-            <span>/</span>
-            <a href="{% url 'pages:sites' %}">Сайты</a>
-            <span>/</span>
-            <span>{{ site_service.title }}</span>
-        </div>
-        <div class="site-service-hero-grid">
-            <div class="site-service-copy">
-                <p class="sites-kicker">Разработка сайтов</p>
+<section class="web-service-hero">
+    <div class="web-shell">
+        <nav class="web-breadcrumbs" aria-label="Хлебные крошки">
+            <a href="{% url 'pages:home' %}">Главная</a><span>/</span>
+            <a href="{% url 'pages:sites' %}">Сайты</a><span>/</span>
+            <span aria-current="page">{{ site_service.title }}</span>
+        </nav>
+        <div class="web-service-grid">
+            <div class="web-service-copy">
+                <p class="web-eyebrow">Lapin Systems / Сайты</p>
                 <h1>{{ site_service.title }}</h1>
-                <p class="site-service-summary">{{ site_service.summary }}</p>
-                <div class="sites-actions">
-                    <a class="sites-button sites-button-primary" href="{% url 'pages:home' %}#contact">Обсудить проект</a>
-                    <a class="sites-button" href="{% url 'pages:sites' %}">Другие форматы</a>
-                </div>
+                <p class="web-summary">{{ site_service.summary }}</p>
+                <a class="web-button" href="#request">Обсудить проект <span aria-hidden="true">↗</span></a>
             </div>
-            <figure class="site-service-visual">
-                <img src="{{ site_service.image_url }}" alt="Пример работы: {{ site_service.title }}">
-                <figcaption>{{ site_service.best_for }}</figcaption>
-            </figure>
+            <img class="web-service-image" src="{{ site_service.image_url }}" width="{{ site_service.image_width }}" height="{{ site_service.image_height }}" alt="{{ site_service.image_alt }}" fetchpriority="high">
         </div>
-    </section>
-
-    <section class="sites-section sites-shell site-service-details">
-        <div>
-            <p class="sites-kicker">По задаче</p>
-            <h2>{{ site_service.lead }}</h2>
+    </div>
+</section>
+<section class="web-story web-shell">
+    <div>
+        <h2>{{ site_service.section_title }}</h2>
+        <p>{{ site_service.lead }}</p>
+        <p class="web-for"><span>Кому подойдёт</span>{{ site_service.best_for }}</p>
+    </div>
+    <div class="web-includes">
+        <h2>Что входит в работу</h2>
+        <ul>{% for item in site_service.includes %}<li>{{ item }}</li>{% endfor %}</ul>
+    </div>
+</section>
+<section id="request" class="web-request-section">
+    <div class="web-shell web-request-grid">
+        <div class="web-request-copy">
+            <p class="web-eyebrow">Обсудим вашу задачу</p>
+            <h2>{{ site_service.request_title }}</h2>
+            <p>{{ site_service.request_hint }}</p>
+            <p class="web-direct"><span>Или позвоните нам</span><a href="tel:+79180916494">+7 918 091-64-94</a></p>
         </div>
-        <div class="site-service-includes">
-            <h3>Что входит в работу</h3>
-            <ul>
-                {% for item in site_service.includes %}
-                    <li>{{ item }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </section>
-
-    <section class="sites-section sites-shell">
-        <div class="sites-section-title">
-            <p class="sites-kicker">Процесс</p>
-            <div>
-                <h2>Понятный запуск по этапам</h2>
-                <p>До начала фиксируем границы первой версии. Вы видите результат по ходу работы и принимаете каждый ключевой этап.</p>
-            </div>
-        </div>
-        <div class="sites-steps">
-            <article><span>01</span><h3>Структура</h3><p>Разбираем продукт, аудиторию и действие, к которому должен прийти посетитель.</p></article>
-            <article><span>02</span><h3>Реализация</h3><p>Делаем адаптивный интерфейс, функциональность, содержание и интеграции.</p></article>
-            <article><span>03</span><h3>Запуск</h3><p>Проверяем сценарии, подключаем аналитику, публикуем и остаёмся на связи.</p></article>
-        </div>
-    </section>
-
-    <section class="sites-section sites-shell">
-        <div class="sites-section-title">
-            <p class="sites-kicker">Ещё варианты</p>
-            <div><h2>Другие форматы сайтов</h2></div>
-        </div>
-        <div class="sites-related">
-            {% for service in related_services %}
-                <a href="{{ service.url }}">
-                    <span>{{ service.title }}</span>
-                    <small>{{ service.summary }}</small>
-                    <b aria-hidden="true">→</b>
-                </a>
-            {% endfor %}
-        </div>
-    </section>
-
-    <section class="sites-cta sites-shell">
-        <div>
-            <p class="sites-kicker">Обсудить проект</p>
-            <h2>Начнём с задачи, а не с шаблона</h2>
-            <p>После короткого разговора предложим состав первой версии и порядок запуска.</p>
-        </div>
-        <div class="sites-actions">
-            <a class="sites-button sites-button-primary" href="tel:+79180916494">+7 918 091-64-94</a>
-            <a class="sites-button" href="{% url 'pages:home' %}#contact">Контакты</a>
-        </div>
-    </section>
+        {% include "pages/_website_request.html" %}
+    </div>
+</section>
+<section class="web-related web-shell">
+    <div class="web-section-heading"><h2>Другие решения</h2><a href="{% url 'pages:sites' %}">Все форматы <span aria-hidden="true">→</span></a></div>
+    <div class="web-related-grid">
+        {% for service in related_services %}
+        <a class="web-related-card" href="{{ service.url }}"><img src="{{ service.image_url }}" width="768" height="512" alt="" loading="lazy"><span>{{ service.title }} <b aria-hidden="true">↗</b></span></a>
+        {% endfor %}
+    </div>
+</section>
 {% endblock %}
