@@ -13,6 +13,7 @@ const fallbackConfig = {
     portfolioAshtanga: "/static/img/portfolio-ashtanga-yoga.jpg",
     portfolioSoyz: "/static/img/portfolio-soyz-zastroi.jpg",
     portfolioInzhenerik: "/static/img/portfolio-inzhenerik.png",
+    portfolioAura: "/static/img/portfolio-aura-20260913.png",
     licenseFsb: "/static/img/license-fsb-2019.png",
   },
   urls: {
@@ -98,6 +99,14 @@ const services = [
 ];
 
 const projects = [
+  {
+    title: "АУРА",
+    type: "Рекламное агентство",
+    text: "Сайт рекламного агентства с каталогом полиграфии, сувениров и услуг для бизнеса.",
+    url: "https://aur-a.ru/",
+    domain: "aur-a.ru",
+    image: "portfolioAura",
+  },
   {
     title: "ФуллБокс",
     type: "Фулфилмент",
