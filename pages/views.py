@@ -32,6 +32,7 @@ class HomeView(TemplateView):
                 "portfolioNozbart": static("img/portfolio-nozbart-russia.png"),
                 "portfolioAshtanga": static("img/portfolio-ashtanga-yoga.jpg"),
                 "portfolioSoyz": static("img/portfolio-soyz-zastroi.jpg"),
+                "portfolioAura": static("img/portfolio-aura-20260913.png"),
                 "licenseFsb": static("img/license-fsb-2019.png"),
             },
             "urls": {

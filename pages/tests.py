@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 from .models import WebsiteRequest
 from .site_services import SITE_SERVICES
+from django.contrib.staticfiles import finders
 
 
 class PublicSiteTests(SimpleTestCase):
@@ -26,6 +27,17 @@ class PublicSiteTests(SimpleTestCase):
         self.assertContains(response, "Сайты")
         self.assertContains(response, reverse("pages:sites"))
         self.assertContains(response, '"sites": "/sites/"')
+
+    def test_home_config_includes_aura_portfolio_preview(self):
+        response = self.client.get(reverse("pages:home"))
+        image_path = "img/portfolio-aura-20260913.png"
+
+        self.assertEqual(
+            response.context["home_config"]["images"]["portfolioAura"],
+            f"/static/{image_path}",
+        )
+        self.assertIsNotNone(finders.find(image_path))
+        self.assertContains(response, "?v=20260913-aura")
 
     def test_sites_catalog_renders_all_site_types(self):
         response = self.client.get(reverse("pages:sites"))
