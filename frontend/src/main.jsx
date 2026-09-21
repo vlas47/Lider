@@ -14,6 +14,7 @@ const fallbackConfig = {
     portfolioSoyz: "/static/img/portfolio-soyz-zastroi.jpg",
     portfolioInzhenerik: "/static/img/portfolio-inzhenerik.png",
     portfolioAura: "/static/img/portfolio-aura-20260913.png",
+    portfolioGlobeTranslate: "/static/img/portfolio-globetranslate-20260921.jpg",
     licenseFsb: "/static/img/license-fsb-2019.png",
   },
   urls: {
@@ -99,6 +100,14 @@ const services = [
 ];
 
 const projects = [
+  {
+    title: "Globe Translate",
+    type: "Бюро переводов",
+    text: "Сайт бюро переводов с каталогом услуг, переводом документов и онлайн-заявкой.",
+    url: "https://globetranslate.ru/",
+    domain: "globetranslate.ru",
+    image: "portfolioGlobeTranslate",
+  },
   {
     title: "АУРА",
     type: "Рекламное агентство",
