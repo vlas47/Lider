@@ -33,6 +33,7 @@ class HomeView(TemplateView):
                 "portfolioAshtanga": static("img/portfolio-ashtanga-yoga.jpg"),
                 "portfolioSoyz": static("img/portfolio-soyz-zastroi.jpg"),
                 "portfolioAura": static("img/portfolio-aura-20260913.png"),
+                "portfolioGlobeTranslate": static("img/portfolio-globetranslate-20260921.jpg"),
                 "licenseFsb": static("img/license-fsb-2019.png"),
             },
             "urls": {

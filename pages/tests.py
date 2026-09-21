@@ -37,7 +37,17 @@ class PublicSiteTests(SimpleTestCase):
             f"/static/{image_path}",
         )
         self.assertIsNotNone(finders.find(image_path))
-        self.assertContains(response, "?v=20260913-aura")
+
+    def test_home_config_includes_globetranslate_portfolio_preview(self):
+        response = self.client.get(reverse("pages:home"))
+        image_path = "img/portfolio-globetranslate-20260921.jpg"
+
+        self.assertEqual(
+            response.context["home_config"]["images"]["portfolioGlobeTranslate"],
+            f"/static/{image_path}",
+        )
+        self.assertIsNotNone(finders.find(image_path))
+        self.assertContains(response, "?v=20260921-globetranslate")
 
     def test_sites_catalog_renders_all_site_types(self):
         response = self.client.get(reverse("pages:sites"))
