@@ -46,20 +46,36 @@ class LeadModelTests(TestCase):
         self.assertEqual(reply["id"], "ecommerce")
         self.assertIn("какие криптовалюты и сети", reply["reply"])
 
-    def test_max_message_uses_server_quick_reply(self):
+    def test_max_message_omits_reasons_and_replies(self):
         lead = Lead(
             source=Lead.SOURCE_FREELANCE,
             title="Интернет-магазин с крипто оплатой",
             raw_text="Нужна оплата криптовалютой.",
             score=54,
             verdict="Можно брать",
+            source_url="https://example.com/order/42",
+            ai_notes="Подходит по профилю.",
             draft_reply="СТАРЫЙ ОБЩИЙ ОТВЕТ",
         )
 
         message = build_max_message(lead)
 
-        self.assertIn("Быстрый ответ · Интернет-магазин", message)
-        self.assertIn("оплатой криптовалютой", message)
+        self.assertEqual(
+            message,
+            "\n".join(
+                [
+                    "Новая заявка Freelance.ru",
+                    "Можно брать: 54/100",
+                    "",
+                    "Интернет-магазин с крипто оплатой",
+                    "",
+                    "https://example.com/order/42",
+                ]
+            ),
+        )
+        self.assertNotIn("Почему интересно", message)
+        self.assertNotIn("Быстрый ответ", message)
+        self.assertNotIn("Подходит по профилю", message)
         self.assertNotIn("СТАРЫЙ ОБЩИЙ ОТВЕТ", message)
 
     def test_health_checks_database(self):

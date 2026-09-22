@@ -7,9 +7,6 @@ import urllib.request
 
 from django.conf import settings
 
-from .quick_replies import build_suggested_quick_reply
-
-
 POSITIVE_RULES = [
     (("crm", "срм", "воронк", "заявк", "клиент", "менеджер"), 18, "CRM и учет заявок"),
     (("веб-разработка", "веб разработка", "сделать сайт", "создание сайта", "разработка сайта", "несколько сайтов", "сайт или несколько сайтов"), 32, "профильная веб-разработка"),
@@ -292,7 +289,6 @@ def send_max_text(text: str, recipient_id: str = "", recipient_kind: str = "") -
 
 
 def build_max_message(lead) -> str:
-    quick_reply = build_suggested_quick_reply(lead)
     source_label = lead.get_source_display() if hasattr(lead, "get_source_display") else "Profi.ru"
     lines = [
         f"Новая заявка {source_label}",
@@ -302,9 +298,6 @@ def build_max_message(lead) -> str:
     ]
     if lead.source_url:
         lines.extend(["", lead.source_url])
-    if lead.ai_notes:
-        lines.extend(["", "Почему интересно:", lead.ai_notes])
-    lines.extend(["", f"Быстрый ответ · {quick_reply['label']}:", quick_reply["reply"]])
     return "\n".join(lines)
 
 
