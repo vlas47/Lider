@@ -47,7 +47,22 @@ class PublicSiteTests(SimpleTestCase):
             f"/static/{image_path}",
         )
         self.assertIsNotNone(finders.find(image_path))
-        self.assertContains(response, "?v=20260921-globetranslate")
+        self.assertContains(response, "?v=20261019-portfolio-sites")
+
+    def test_home_config_includes_latest_portfolio_previews(self):
+        response = self.client.get(reverse("pages:home"))
+        previews = {
+            "portfolioSantehshkaf": "img/portfolio-santehshkaf-20261019.jpg",
+            "portfolioLextours": "img/portfolio-lextours-20261019.jpg",
+        }
+
+        for config_key, image_path in previews.items():
+            with self.subTest(config_key=config_key):
+                self.assertEqual(
+                    response.context["home_config"]["images"][config_key],
+                    f"/static/{image_path}",
+                )
+                self.assertIsNotNone(finders.find(image_path))
 
     def test_sites_catalog_renders_all_site_types(self):
         response = self.client.get(reverse("pages:sites"))
