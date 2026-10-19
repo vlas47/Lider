@@ -15,6 +15,8 @@ const fallbackConfig = {
     portfolioInzhenerik: "/static/img/portfolio-inzhenerik.png",
     portfolioAura: "/static/img/portfolio-aura-20260913.png",
     portfolioGlobeTranslate: "/static/img/portfolio-globetranslate-20260921.jpg",
+    portfolioSantehshkaf: "/static/img/portfolio-santehshkaf-20261019.jpg",
+    portfolioLextours: "/static/img/portfolio-lextours-20261019.jpg",
     licenseFsb: "/static/img/license-fsb-2019.png",
   },
   urls: {
@@ -100,6 +102,22 @@ const services = [
 ];
 
 const projects = [
+  {
+    title: "Лекс-Тур",
+    type: "Туристическое агентство",
+    text: "Сайт туристического агентства с поиском туров, горящими предложениями и заявками на подбор.",
+    url: "https://lextours.ru/",
+    domain: "lextours.ru",
+    image: "portfolioLextours",
+  },
+  {
+    title: "Сантехшкаф.рф",
+    type: "Мебель на заказ",
+    text: "Сайт студии индивидуальной мебели с каталогом проектов и 3D-конструктором сантехнических шкафов.",
+    url: "https://santehshkaf.ru/",
+    domain: "santehshkaf.ru",
+    image: "portfolioSantehshkaf",
+  },
   {
     title: "Globe Translate",
     type: "Бюро переводов",
