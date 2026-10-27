@@ -146,7 +146,7 @@ def publish(source: Path, helper: Path, result_path: Path):
     result_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     with urlopen(Request(URL, headers={"User-Agent": "Mozilla/5.0"}), timeout=20) as response:
         body = response.read().decode("utf-8")
-        if response.status != 200 or "Форма впечатления" not in body:
+        if response.status != 200 or "Сигнал — из идеи в форму" not in body:
             raise RuntimeError("Public HTML verification failed")
         result["public_status"] = response.status
     result_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")

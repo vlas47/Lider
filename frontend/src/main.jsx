@@ -104,9 +104,9 @@ const services = [
 
 const projects = [
   {
-    title: "Форма впечатления",
+    title: "Сигнал",
     type: "Демонстрационный концепт · WebGL",
-    text: "Интерактивный лендинг с 3D-сценой, частицами, жидкой поверхностью и анимацией типографики.",
+    text: "Световая скульптура превращается в живое поле, затем — в слово из частиц. Единая WebGL-сцена с реакцией на курсор и прокрутку.",
     url: "https://liderscan.ru/demo/motion/",
     domain: "liderscan.ru/demo/motion",
     image: "portfolioMotion",

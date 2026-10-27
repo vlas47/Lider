@@ -1,4 +1,4 @@
-# Motion demo: Форма впечатления
+# Motion demo: Сигнал — из идеи в форму
 
 - Public URL: https://liderscan.ru/demo/motion/
 - Portfolio: first card in the homepage's «Работы, которые можно открыть» carousel.
@@ -9,12 +9,17 @@
 
 ## Experience
 
-Three scene modes: ray-marched sculpture, GPU particles and an impulse variation.
-The laboratory includes a ping-pong wave surface, texture-based WebGL typography,
-scroll stretch, intensity control, pause, and optional synthesized stereo audio.
-Audio starts only after a click. `prefers-reduced-motion` starts with motion paused.
-Graphics stop drawing when paused and pause off screen. Mobile uses fewer particles
-and a lower pixel ratio. A CSS fallback remains when WebGL is unavailable.
+A single scroll-driven WebGL scene tells a three-chapter story: a copper Lorenz
+light sculpture, a flowing ribbon field, and particle typography («СМЫСЛ»).
+The geometry morphs between these states. Pointer movement displaces the field;
+the impulse button scatters the sculpture before it reforms. A ping-pong wave
+simulation, two-pass bloom, chromatic dispersion and grain complete the scene.
+
+Synthesized stereo audio starts only after a click. Pause stops automatic movement;
+`prefers-reduced-motion` starts paused. Hidden tabs and the closing section stop
+unnecessary drawing. Mobile uses 36,000 vertices instead of 144,000, a lower pixel
+ratio and a 30 fps limit. CSS contours and readable HTML typography remain when
+WebGL is unavailable. All essential content and contact links are ordinary HTML.
 
 ## Publication
 
@@ -44,8 +49,8 @@ the public HTML. Older releases are retained for rollback.
 
 ## Validation
 
-- JavaScript syntax (`node --check demos/motion/app.js`).
-- Browser: all three WebGL canvases report ready, scene controls, pause, sound,
-  intensity, navigation, desktop and 390 px mobile layout.
+- JavaScript syntax (`node --check demos/motion/signal.js`).
+- Browser: the single canvas reports ready; all three scroll states, impulse,
+  pause, sound, navigation, desktop and 390 px mobile layout.
 - Existing React build and Django `check` / `test pages` before deployment.
 - Public page, assets, CSP compatibility and portfolio link after publication.
