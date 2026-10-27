@@ -36,6 +36,7 @@ class HomeView(TemplateView):
                 "portfolioGlobeTranslate": static("img/portfolio-globetranslate-20260921.jpg"),
                 "portfolioSantehshkaf": static("img/portfolio-santehshkaf-20261019.jpg"),
                 "portfolioLextours": static("img/portfolio-lextours-20261019.jpg"),
+                "portfolioMotion": static("img/portfolio-motion-20261027.jpg"),
                 "licenseFsb": static("img/license-fsb-2019.png"),
             },
             "urls": {

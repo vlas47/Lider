@@ -17,6 +17,7 @@ const fallbackConfig = {
     portfolioGlobeTranslate: "/static/img/portfolio-globetranslate-20260921.jpg",
     portfolioSantehshkaf: "/static/img/portfolio-santehshkaf-20261019.jpg",
     portfolioLextours: "/static/img/portfolio-lextours-20261019.jpg",
+    portfolioMotion: "/static/img/portfolio-motion-20261027.jpg",
     licenseFsb: "/static/img/license-fsb-2019.png",
   },
   urls: {
@@ -102,6 +103,14 @@ const services = [
 ];
 
 const projects = [
+  {
+    title: "Форма впечатления",
+    type: "Демонстрационный концепт · WebGL",
+    text: "Интерактивный лендинг с 3D-сценой, частицами, жидкой поверхностью и анимацией типографики.",
+    url: "https://liderscan.ru/demo/motion/",
+    domain: "liderscan.ru/demo/motion",
+    image: "portfolioMotion",
+  },
   {
     title: "Лекс-Тур",
     type: "Туристическое агентство",
@@ -724,7 +733,7 @@ function Projects({ images }) {
       <SectionTitle
         kicker="Проекты"
         title="Работы, которые можно открыть"
-        text="Не концепты и не красивые картинки, а реальные сайты с понятной задачей."
+        text="Сайты, сервисы и интерактивные концепты. Откройте проект, чтобы познакомиться с ним."
       />
       <div className="ls-projects-reveal ls-reveal" style={{ "--reveal-delay": "0.12s" }}>
         <div

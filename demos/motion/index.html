@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101211">
+  <meta name="description" content="Демонстрационный концепт AI Лапин: интерактивная 3D-графика, частицы, жидкая поверхность и типографика в движении. Попробуйте эффекты прямо в браузере.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Форма впечатления — интерактивный концепт AI Лапин">
+  <meta property="og:description" content="Двигайте курсором. Меняйте форму. Почувствуйте, каким может быть ваш сайт.">
+  <meta property="og:image" content="https://liderscan.ru/demo/motion/assets/preview.jpg">
+  <link rel="canonical" href="https://liderscan.ru/demo/motion/">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/manrope.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="style.css">
+  <title>Форма впечатления · AI Лапин</title>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+  <header class="header">
+    <a class="brand" href="https://liderscan.ru/" aria-label="AI Лапин — основной сайт">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 0v32M0 16h32M4.7 4.7l22.6 22.6M4.7 27.3L27.3 4.7"/></svg>
+      <span>AI ЛАПИН<span class="brand-sub">DIGITAL EXPERIENCES</span></span>
+    </a>
+    <nav class="nav" aria-label="Навигация по странице">
+      <a href="#effects">Эффекты</a><a href="#approach">Подход</a><a href="#contact">Контакт</a>
+    </nav>
+    <a class="header-cta" href="#contact">Обсудить идею <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-topline"><span><i class="status-dot"></i> ДЕМОНСТРАЦИОННЫЙ КОНЦЕПТ</span><span>EXPERIMENT No. 01 / 2026</span></div>
+      <div class="hero-copy">
+        <p class="eyebrow">ФОРМА ВПЕЧАТЛЕНИЯ</p>
+        <h1 id="hero-title">Сайт,<br>который<br><span>чувствуют.</span></h1>
+        <p class="hero-description">Смысл становится формой.<br>Движение — частью вашего бренда.</p>
+        <a class="round-link" href="#effects"><span class="arrow-circle" aria-hidden="true">↘</span><span>Исследовать эффекты</span></a>
+      </div>
+      <div class="hero-art" id="hero-art">
+        <div class="orb-fallback" aria-hidden="true"></div>
+        <canvas id="sculpture" aria-label="Интерактивная абстрактная 3D-скульптура. Её форму можно изменить кнопками под изображением."></canvas>
+        <span class="art-coordinate coordinate-left" aria-hidden="true">[ OBJECT / 001 ]</span>
+        <span class="art-coordinate coordinate-right" aria-hidden="true">X <span id="coord-x">0.00</span><br>Y <span id="coord-y">0.00</span></span>
+        <div class="art-caption"><span class="art-caption-line"></span> Двигайте курсором. Форма откликнется.</div>
+        <div class="scene-switch" role="group" aria-label="Форма 3D-сцены">
+          <button type="button" data-scene="0" aria-pressed="true"><span>01</span> Поток</button>
+          <button type="button" data-scene="1" aria-pressed="false"><span>02</span> Орбита</button>
+          <button type="button" data-scene="2" aria-pressed="false"><span>03</span> Импульс</button>
+        </div>
+      </div>
+      <div class="hero-bottom"><span>ДВИЖЕНИЕ, К КОТОРОМУ ХОЧЕТСЯ ПРИКОСНУТЬСЯ.</span><a href="#effects" aria-label="Прокрутить к лаборатории эффектов"><span class="scroll-line" aria-hidden="true"></span> ЛИСТАЙТЕ ВНИЗ</a></div>
+    </section>
+
+    <div class="ticker" aria-hidden="true"><div>WEBGL <b>✳</b> ДВИЖЕНИЕ <b>✳</b> ХАРАКТЕР <b>✳</b> ВЗАИМОДЕЙСТВИЕ <b>✳</b> WEBGL <b>✳</b> ДВИЖЕНИЕ <b>✳</b> ХАРАКТЕР <b>✳</b> ВЗАИМОДЕЙСТВИЕ <b>✳</b></div></div>
+
+    <section class="effects section-wrap" id="effects" aria-labelledby="effects-title">
+      <div class="section-meta reveal"><span>01 / ЛАБОРАТОРИЯ ЭФФЕКТОВ</span><span>ПОПРОБУЙТЕ САМИ</span></div>
+      <div class="section-heading reveal"><h2 id="effects-title">Идея обретает<br><em>своё движение.</em></h2><p>Визуальный язык вашего бренда.<br>Каждый эффект помогает рассказать<br>историю и удержать внимание.</p></div>
+      <div class="lab-grid">
+        <article class="liquid-panel reveal" id="liquid-panel">
+          <canvas id="liquid" aria-label="Жидкая поверхность. Двигайте указателем или коснитесь поверхности, чтобы создать расходящиеся волны."></canvas>
+          <div class="panel-top"><span>01 / LIQUID SURFACE</span><span class="mini-cross" aria-hidden="true">+</span></div>
+          <div class="liquid-copy"><span class="small-label">ПРИКОСНОВЕНИЕ МЕНЯЕТ ВСЁ</span><h3>Ощутимое<br>присутствие.</h3></div>
+          <div class="panel-bottom"><span>Проведите курсором или коснитесь</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 3 13 11-7 1-3 6z"/></svg></div>
+        </article>
+        <div class="lab-aside">
+          <article class="type-panel reveal" id="type-panel">
+            <div class="panel-top"><span>02 / WEBGL TYPE</span><span class="mini-cross" aria-hidden="true">+</span></div>
+            <canvas id="type-canvas" aria-label="Слово «ДВИЖЕНИЕ» меняет форму при прокрутке и движении указателя."></canvas>
+            <div class="type-fallback" aria-hidden="true">ДВИЖЕНИЕ</div>
+            <p>Буквы выходят за привычные рамки.<br>Прокрутите страницу — и почувствуйте ритм.</p>
+          </article>
+          <div class="controls-panel reveal">
+            <div><span class="small-label">ВАШ ТЕМП</span><label for="intensity">Интенсивность движения</label></div>
+            <input id="intensity" type="range" min="0" max="100" value="55" aria-label="Интенсивность движения">
+            <div class="control-buttons">
+              <button class="utility-button" id="motion-toggle" type="button" aria-pressed="false"><span class="control-symbol" aria-hidden="true">Ⅱ</span><span>Пауза эффектов</span></button>
+              <button class="utility-button" id="sound-toggle" type="button" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8h3l4-4v12l-4-4H3zM14 7a5 5 0 0 1 0 6M16 4a9 9 0 0 1 0 12"/></svg><span>Звук: выкл</span></button>
+            </div>
+            <p class="control-note" id="audio-note">Пространственный звук включается по желанию.</p>
+          </div>
+        </div>
+      </div>
+      <div class="lab-footnote reveal"><span class="small-label">СДЕЛАНО ДЛЯ ЖИВОГО ВЗАИМОДЕЙСТВИЯ</span><p>Эффекты на этой странице создаются в реальном времени.<br>Изображение реагирует на ваши движения.</p></div>
+    </section>
+
+    <section class="manifesto" aria-labelledby="manifesto-title">
+      <div class="section-wrap">
+        <div class="section-meta"><span>02 / ДВИЖЕНИЕ СО СМЫСЛОМ</span><span>SCROLL TO FEEL</span></div>
+        <h2 id="manifesto-title" class="stretch-title"><span>МЕНЬШЕ</span><span class="outline-word">ОБЫЧНОГО.</span><span>БОЛЬШЕ <i>ВАШЕГО.</i></span></h2>
+        <div class="manifesto-bottom"><span class="asterisk" aria-hidden="true">✳</span><p>Сильный сайт начинается с характера компании.<br>Технологии помогают сделать этот характер видимым.</p></div>
+      </div>
+    </section>
+
+    <section class="approach section-wrap" id="approach" aria-labelledby="approach-title">
+      <div class="section-meta reveal"><span>03 / ОТ КОНЦЕПЦИИ К САЙТУ</span><span>ВСЁ НАЧИНАЕТСЯ С ДИАЛОГА</span></div>
+      <div class="section-heading reveal"><h2 id="approach-title">Сначала — характер.<br><em>Затем — технология.</em></h2><p>Выбираем эффекты под вашу задачу.<br>Сохраняем ясность, удобство<br>и внимание к деталям.</p></div>
+      <div class="process-list">
+        <article class="process-row reveal"><span class="process-number">01</span><h3>Находим<br>визуальный язык</h3><p>Обсуждаем компанию, аудиторию и настроение. Выбираем референсы, выстраиваем структуру и направление дизайна.</p><span class="process-tag">КОНЦЕПЦИЯ</span></article>
+        <article class="process-row reveal"><span class="process-number">02</span><h3>Даём идее<br>движение</h3><p>Собираем ключевой экран и интерактивный прототип. Вы можете увидеть и попробовать эффект до разработки всего сайта.</p><span class="process-tag">ПРОТОТИП</span></article>
+        <article class="process-row reveal"><span class="process-number">03</span><h3>Доводим<br>до запуска</h3><p>Разрабатываем страницы, подключаем управление контентом. Адаптируем графику для телефонов, проверяем скорость и сценарии.</p><span class="process-tag">РАЗРАБОТКА</span></article>
+      </div>
+      <div class="concept-note reveal"><span class="concept-icon" aria-hidden="true">↗</span><p>Эта страница — самостоятельный демонстрационный концепт AI Лапин.<br>Для вашего проекта создадим собственный визуальный мир.</p></div>
+    </section>
+
+    <section class="contact section-wrap" id="contact" aria-labelledby="contact-title">
+      <div class="section-meta"><span>04 / ВАША ИДЕЯ — СЛЕДУЮЩАЯ</span><span><i class="status-dot"></i> ОТКРЫТ К ОБСУЖДЕНИЮ</span></div>
+      <h2 id="contact-title">Придадим форму<br><span>вашей идее?</span></h2>
+      <div class="contact-bottom"><div class="contact-person"><span class="person-mark" aria-hidden="true">ВЛ</span><div><strong>Владимир</strong><span>Разработка сайтов и цифровых продуктов</span></div></div><a class="contact-phone" href="tel:+79180916494">8 918 091 64 94 <span aria-hidden="true">↗</span></a></div>
+    </section>
+  </main>
+  <footer class="footer section-wrap"><a href="https://liderscan.ru/">liderscan.ru <span aria-hidden="true">↗</span></a><span>AI ЛАПИН © 2026</span><a href="#main">В начало <span aria-hidden="true">↑</span></a></footer>
+  <noscript><p class="noscript">Для интерактивных эффектов включите JavaScript. Информация и контакты доступны без него.</p></noscript>
+</body>
+</html>

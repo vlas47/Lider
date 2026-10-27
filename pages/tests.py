@@ -47,7 +47,7 @@ class PublicSiteTests(SimpleTestCase):
             f"/static/{image_path}",
         )
         self.assertIsNotNone(finders.find(image_path))
-        self.assertContains(response, "?v=20261019-portfolio-sites")
+        self.assertContains(response, "?v=20261027-motion-demo")
 
     def test_home_config_includes_latest_portfolio_previews(self):
         response = self.client.get(reverse("pages:home"))
