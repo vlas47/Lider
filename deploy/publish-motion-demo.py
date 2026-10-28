@@ -27,6 +27,9 @@ URL = "https://liderscan.ru/demo/motion/"
 
 def read_file(sftp, path):
     with sftp.open(path, "rb") as stream:
+        size = stream.stat().st_size
+        if size > 262144:
+            stream.prefetch(file_size=size, max_concurrent_requests=16)
         return stream.read()
 
 
