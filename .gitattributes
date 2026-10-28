@@ -3,3 +3,5 @@
 *.timer text eol=lf
 *.yml text eol=lf
 *.yaml text eol=lf
+# Generated library contains upstream GLSL template literals.
+demos/motion/sand/vendor/scene.min.js -whitespace

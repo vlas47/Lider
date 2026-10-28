@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#14171a">
+  <title>Из песка — в движение · AI Лапин</title>
+  <meta name="description" content="Автомобиль рассыпается в песок, переносится по площадке и собирается заново. Интерактивная 3D-демонстрация AI Лапин.">
+  <meta property="og:title" content="Из песка — в движение · AI Лапин"><meta property="og:type" content="website">
+  <meta property="og:description" content="Форма исчезает. Характер остаётся. Попробуйте превращение автомобиля в песок.">
+  <meta property="og:image" content="https://liderscan.ru/demo/motion/sand/preview.jpg">
+  <link rel="canonical" href="https://liderscan.ru/demo/motion/sand/">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="preload" href="../assets/manrope.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="sand.css?v=2">
+  <script type="module" src="sand.js?v=2"></script>
+</head>
+<body>
+  <a class="skip" href="#experience">К демонстрации</a>
+  <main class="experience" id="experience">
+    <div class="stage" id="stage"><canvas id="scene" aria-label="Трёхмерная сцена: BMW M4 превращается в песок и собирается в другом месте"></canvas><div class="fallback" id="fallback" hidden><p>Интерактивная сцена требует поддержки WebGL 2.<br>Откройте страницу в современном браузере.</p></div></div>
+    <div class="atmosphere" aria-hidden="true"></div>
+    <header class="header">
+      <a class="brand" href="https://liderscan.ru/" aria-label="AI Лапин — основной сайт"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M3 11v6m5-13v20M14 0v28m6-24v20m5-13v6"/></svg><span>AI ЛАПИН<small>INTERACTIVE EXPERIMENTS</small></span></a>
+      <a class="back" href="../">Другие эффекты <span>↗</span></a>
+      <a class="contact" href="tel:+79180916494">Обсудить идею <span>↗</span></a>
+    </header>
+    <section class="intro" aria-labelledby="title">
+      <p class="kicker"><i></i> ИССЛЕДОВАНИЕ ФОРМЫ <span>002 / SAND & MOTION</span></p>
+      <h1 id="title">Из песка.<br><em>В движение.</em></h1>
+      <p class="intro-note">Форма исчезает.<br>Характер остаётся.</p>
+    </section>
+    <div class="scene-label" aria-hidden="true"><span class="cross">+</span><div>BMW M4<small>COMPETITION<br>SAND TRANSFORMATION</small></div></div>
+    <div class="scene-status" aria-live="polite"><span class="status-index" id="status-index">01</span><div><span id="status-title">Движение</span><small id="status-copy">У каждой формы есть свой путь.</small></div></div>
+    <div class="ground-coordinates" aria-hidden="true">S 28° / E 64°<span>ПЕСЧАНОЕ ПОЛЕ / ВИРТУАЛЬНАЯ СЦЕНА</span></div>
+    <section class="control-deck" aria-label="Управление превращением">
+      <div class="deck-top"><button class="play" id="play" type="button"><span aria-hidden="true">↻</span><span id="play-label">Смотреть превращение</span></button><div class="deck-hint">Автомобиль → песок → новая точка → автомобиль</div><button class="pause" id="pause" type="button" aria-pressed="true" aria-label="Продолжить анимацию"><span id="pause-icon" aria-hidden="true">▷</span><span id="pause-label">ПРОДОЛЖИТЬ</span></button></div>
+      <div class="timeline"><label class="sr-only" for="timeline">Момент превращения</label><input id="timeline" type="range" min="0" max="1000" value="0" step="1" aria-valuetext="Начало: автомобиль на площадке"><span class="time" id="time">00 / 24 СЕК</span></div>
+      <div class="chapters"><button data-time="0.08" type="button" aria-pressed="true"><b>01</b> Движение</button><button data-time="0.25" type="button" aria-pressed="false"><b>02</b> Распад</button><button data-time="0.43" type="button" aria-pressed="false"><b>03</b> Песок</button><button data-time="0.82" type="button" aria-pressed="false"><b>04</b> Сборка</button><button data-time="0.92" type="button" aria-pressed="false"><b>05</b> Новый путь</button></div>
+    </section>
+    <footer class="footer"><span>ДЕМОНСТРАЦИОННЫЙ КОНЦЕПТ · 2026</span><a class="model-credit" href="assets/CREDITS.txt" target="_blank" rel="noopener">3D: SRT Perfomance · CC BY 4.0</a><span class="drag-hint">Проведите по сцене, чтобы сменить ракурс</span><a href="https://liderscan.ru/">liderscan.ru ↗</a></footer>
+    <p class="loading" id="loading" role="status">Собираем сцену<span>Песчинка за песчинкой</span></p>
+    <noscript><p class="no-script">Для превращения автомобиля включите JavaScript.</p></noscript>
+  </main>
+</body>
+</html>
