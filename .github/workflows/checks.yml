@@ -57,6 +57,9 @@ jobs:
         run: npm audit --audit-level=high
         working-directory: frontend
 
+      - name: Check dune motion and wheel contact
+        run: node --test tests/sand-dune-motion.test.mjs
+
       - name: Build frontend
         run: npm run build
         working-directory: frontend
