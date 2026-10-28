@@ -14,7 +14,10 @@ The supplied web derivative uses Meshopt/WebP compression and 512 px textures,
 and omits four hidden cabin/engine meshes. Geometry simplification was not used.
 Original creator, source and CC BY 4.0 metadata are embedded in the model.
 
-Changes for this demonstration by AI Lapin: coordinate normalization, silver
-paint and studio materials, lighting, GPU sand sampling, dissolve and reassembly
-animation. The source GLB and its embedded credits are preserved unchanged.
+Changes for this demonstration by AI Lapin: coordinate normalization, graphite
+paint and materials, lighting, separation of four independently rolling wheels,
+terrain-following suspension, GPU sand sampling, spatial dissolve and reassembly,
+an irregular travelling sand mass and seven small granular vortices. Attribution
+is retained in the HTML metadata, accessible description and this credit file.
+The source GLB and its embedded credits are preserved unchanged.
 This independent demonstration is not an official BMW project or endorsement.

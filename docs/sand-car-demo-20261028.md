@@ -1,40 +1,42 @@
-# Sand car transformation
+# Dune car transformation
 
 Public route: https://liderscan.ru/demo/motion/sand/
 
-This is an explicitly labelled demonstration concept. The car is the detailed
-BMW M4 Competition M Package by SRT Perfomance, distributed under CC BY 4.0.
-The credited 3.9 MB web derivative retains its embedded author/license metadata;
-the full provenance, checksum and modifications are in `sand/assets/CREDITS.txt`.
-The page visibly credits the artist and links to that file. This is an independent
-animation demonstration, not an official BMW commission or endorsement.
+The scene fills the viewport, with no visible text, buttons or timeline. A BMW M4
+drives over a dune, crosses a spatial boundary and gradually becomes sand. The
+sand accumulates into a travelling, irregular mass larger than the car. Its lobes
+shift, its surface ripples, and seven small granular vortices lift and return
+grains. At the second boundary the mass shrinks while the moving car reappears.
 
-The loaded model has 179,033 triangles. It is normalized to the stage, given
-graphite metallic paint and studio materials, and its optional livery overlay is
-omitted at runtime. Its mesh surfaces supply the animated sand samples. Three.js
-0.186.1, GLTFLoader and the Meshopt decoder are bundled locally with their MIT
-notice; fonts reuse the existing licensed Motion assets. No CDN or analytics is used.
+BMW M4 Competition M Package by SRT Perfomance, CC BY 4.0, 179,033 triangles.
+The credited 3.9 MB web derivative and embedded metadata are preserved unchanged.
+Provenance, checksum and runtime modifications: `sand/assets/CREDITS.txt`.
+Credit remains in HTML metadata, the accessible description and linked credit
+file. This independent animation demo implies no BMW endorsement.
+Three.js 0.186.1, GLTFLoader and Meshopt decoder are bundled with MIT notices.
+No CDN, analytics, new runtime service or external asset request is used.
 
 ## Experience
 
-One deterministic 24-second timeline controls the full sequence:
+One deterministic 28-second loop controls the car, heap and particles:
 
-1. The intact car drives to the left stopping point.
-2. A granular front-to-rear dissolve removes the real model while surface samples
-   follow falling paths into a three-dimensional pile.
-3. The pile holds, then its grains move in a low wave to the right stopping point.
-4. The grains rise and reconstruct the sampled car while the solid model reappears.
-5. The restored car drives forward and holds its final pose for inspection.
+1. Four independent wheel assemblies roll over the dune. Rotation follows terrain
+   arc length; chassis pitch/roll and suspension offsets maintain road contact.
+2. Surface samples detach at the first spatial plane, including wheel rotation.
+3. Sand accumulates continuously in a lobed, rippling mass, then rolls to the exit.
+4. Seven small granular vortices lift grains and return them to the larger mass.
+5. The heap shrinks while surface samples rejoin the moving car at the exit plane.
 
-Desktop uses 145,000 GPU-animated sand grains; mobile uses 52,000, a lower pixel
-ratio and a 30 fps limit. Scene meshes and shadow depth materials use the same
-dissolve, so an invisible intact car is not left casting a shadow. Particle
-shadows are represented with a separate soft contact shadow.
+Desktop uses 105,000 samples per falling/rising layer, 14,000 surface-flow grains
+and 28,000 vortex grains. Small screens use 38,000, 5,000 and 9,000 respectively,
+a lower pixel ratio and a 30 fps limit. CPU terrain queries, the GPU surface,
+normals and shadow depth share the evolving heightfield. Airborne grains are a
+visual animation, not a physical granular-fluid simulation.
 
-Playback runs once after loading. Replay, pause, named phases and a keyboard-
-accessible timeline allow inspecting any instant. Dragging the scene changes the
-camera angle. Reduced-motion visitors start paused; hidden tabs suspend playback.
-Unsupported or lost WebGL contexts show a clear explanation.
+Click or Space pauses; arrows step one second and Shift+arrows five.
+Home/End seek the ends. Drag changes the camera, the wheel zooms, double click
+resets the view. Reduced-motion visitors start paused. Hidden tabs suspend
+advancement. A current scene poster appears if WebGL is unavailable or lost.
 
 ## Source and deployment
 
@@ -47,6 +49,8 @@ its previous policy. No application service is added.
 
 Local preview: `python -m http.server 8847 --bind 127.0.0.1 --directory demos/motion`
 
-Checks: JavaScript syntax, browser scene readiness, model/dissolve/pile/rebuild/
-departure, timeline controls, camera drag, 390 px responsive layout, and public
-asset checksums after deployment. Required repository CI runs before merge.
+Node tests in `tests/sand-dune-motion.test.mjs` verify wheel contact, rolling
+distance, spatial particle events, smooth heap transitions and its bounds/size.
+They also run in required repository CI. Browser checks cover drive, accumulation,
+rolling, reassembly, keyboard controls, mobile layout and console errors.
+Public asset checksums are verified after the atomic static deployment.
