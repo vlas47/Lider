@@ -1,12 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Archive, ArrowRight, ExternalLink, Globe2, LogIn, Phone, ShieldCheck } from "lucide-react";
+import { Archive, ArrowRight, ExternalLink, Globe2, LogIn, Phone, ShieldCheck, Trophy } from "lucide-react";
+import { AchievementDialog, AchievementNotice } from "./achievement-news";
 import "./styles.css";
 
 const fallbackConfig = {
   images: {
     founder: "/static/img/founder-photo.png",
     nextGen: "/static/img/next-gen-photo.jpg",
+    nikitaHackathon: "/static/img/nikita-max-hackathon-20261030.webp",
+    nikitaHackathonOriginal: "/static/img/nikita-max-hackathon-original-20261030.webp",
     portfolioDomkapsul: "/static/img/portfolio-domkapsul.jpg",
     portfolioFullbox: "/static/img/portfolio-fullbox.jpg",
     portfolioNozbart: "/static/img/portfolio-nozbart-russia.png",
@@ -389,7 +392,7 @@ function ScrambleText({ className, text, delay = 0, duration = 860, seed = 0, di
   );
 }
 
-function PhotoCard({ className, image, alt, label, lines, delay = 0, rhythmSeed = 1 }) {
+function PhotoCard({ className, image, alt, label, lines, delay = 0, rhythmSeed = 1, onOpenAchievement }) {
   const [lineState, setLineState] = useState({ index: 0, cycle: 0, direction: "in" });
   const [showLine, setShowLine] = useState(false);
 
@@ -439,6 +442,19 @@ function PhotoCard({ className, image, alt, label, lines, delay = 0, rhythmSeed 
   return (
     <figure className={`ls-photo ${className}`} style={{ "--photo-delay": `${delay}s` }}>
       <img src={image} alt={alt} />
+      {onOpenAchievement ? (
+        <button
+          type="button"
+          className="ls-photo-achievement"
+          onClick={onOpenAchievement}
+          aria-label="Читать новость: Никита Лапин занял первое место на хакатоне MAX"
+          aria-haspopup="dialog"
+          aria-controls="nikita-hackathon-news"
+          title="Никита Лапин — победитель хакатона MAX"
+        >
+          <Trophy size={15} aria-hidden="true" /> 1 место
+        </button>
+      ) : null}
       <figcaption className="ls-photo-caption">
         <ScrambleText
           className="ls-photo-label"
@@ -464,10 +480,11 @@ function PhotoCard({ className, image, alt, label, lines, delay = 0, rhythmSeed 
   );
 }
 
-function Hero({ config }) {
+function Hero({ config, onOpenAchievement }) {
   return (
     <section className="ls-hero">
       <div className="ls-hero-grid" aria-hidden="true" />
+      <AchievementNotice image={config.images.nikitaHackathon} onOpen={onOpenAchievement} />
       <div className="ls-shell ls-hero-canvas">
         <PhotoCard
           className="ls-photo-founder"
@@ -488,7 +505,7 @@ function Hero({ config }) {
         <PhotoCard
           className="ls-photo-next"
           image={config.images.nextGen}
-          alt="Новый взгляд на современные технологии"
+          alt="Никита Лапин, разработчик нашей команды"
           label="Новый взгляд"
           lines={[
             "Современные интерфейсы",
@@ -499,6 +516,7 @@ function Hero({ config }) {
           ]}
           delay={0.22}
           rhythmSeed={31}
+          onOpenAchievement={onOpenAchievement}
         />
 
         <div className="ls-hero-title">
@@ -941,11 +959,21 @@ function Contact({ config }) {
 
 function HomeApp() {
   const config = readConfig();
+  const newsDialogRef = useRef(null);
+  const openAchievement = useCallback(() => {
+    const dialog = newsDialogRef.current;
+    if (dialog && !dialog.open) dialog.showModal();
+  }, []);
   useScrollReveal();
 
   return (
     <div className="ls-home">
-      <Hero config={config} />
+      <Hero config={config} onOpenAchievement={openAchievement} />
+      <AchievementDialog
+        dialogRef={newsDialogRef}
+        image={config.images.nikitaHackathon}
+        originalImage={config.images.nikitaHackathonOriginal}
+      />
       <Projects images={config.images} />
       <Testimonials />
       <Services />

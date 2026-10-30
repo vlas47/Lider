@@ -27,6 +27,8 @@ class HomeView(TemplateView):
             "images": {
                 "founder": static("img/founder-photo.png"),
                 "nextGen": static("img/next-gen-photo.jpg"),
+                "nikitaHackathon": static("img/nikita-max-hackathon-20261030.webp"),
+                "nikitaHackathonOriginal": static("img/nikita-max-hackathon-original-20261030.webp"),
                 "portfolioDomkapsul": static("img/portfolio-domkapsul.jpg"),
                 "portfolioFullbox": static("img/portfolio-fullbox.jpg"),
                 "portfolioNozbart": static("img/portfolio-nozbart-russia.png"),
