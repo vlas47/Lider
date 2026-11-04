@@ -977,6 +977,19 @@ function HomeApp() {
       <Projects images={config.images} />
       <Testimonials />
       <Services />
+      <section className="ls-section ls-shell" aria-labelledby="krona-training-title">
+        <a className="ls-training-partner ls-reveal" href="https://krona38.ru/services" target="_blank" rel="noopener noreferrer">
+          <div className="ls-training-partner-media">
+            <img src="/static/img/krona-training-partner.webp" alt="Занятие по охране труда в учебной аудитории" loading="lazy" width="960" height="540" />
+          </div>
+          <div className="ls-training-partner-copy">
+            <img className="ls-training-partner-logo" src="/static/img/krona-training-logo.svg" alt="КРОНА — учебный центр" width="200" height="48" loading="lazy" />
+            <h2 id="krona-training-title">Профессиональное обучение для вас и вашей команды</h2>
+            <p>Рабочие профессии, повышение квалификации, профессиональная переподготовка и охрана труда в учебном центре «КРОНА».</p>
+            <span className="ls-training-partner-link">Выбрать программу на krona38.ru <ExternalLink size={18} aria-hidden="true" /></span>
+          </div>
+        </a>
+      </section>
       <License image={config.images.licenseFsb} />
       <Process />
       <Stack />
