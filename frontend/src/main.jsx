@@ -21,6 +21,7 @@ const fallbackConfig = {
     portfolioSantehshkaf: "/static/img/portfolio-santehshkaf-20261019.jpg",
     portfolioLextours: "/static/img/portfolio-lextours-20261019.jpg",
     portfolioMotion: "/static/img/portfolio-motion-20261027.jpg",
+    portfolioKrona: "/static/img/portfolio-krona-20261104.webp",
     licenseFsb: "/static/img/license-fsb-2019.png",
   },
   urls: {
@@ -106,6 +107,14 @@ const services = [
 ];
 
 const projects = [
+  {
+    title: "КРОНА",
+    type: "Учебный центр",
+    text: "Сайт образовательного центра с каталогом программ и личными кабинетами слушателей, предприятий и сотрудников.",
+    url: "https://krona38.ru/",
+    domain: "krona38.ru",
+    image: "portfolioKrona",
+  },
   {
     title: "Сигнал",
     type: "Демонстрационный концепт · WebGL",
